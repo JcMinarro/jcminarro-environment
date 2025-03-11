@@ -1,0 +1,8 @@
+---
+# defaults file for jcminarro-environment
+
+# Anki
+anki_version: "25.02"
+anki_package: "anki-{{ anki_version }}-linux-qt6"
+anki_url: "https://github.com/ankitects/anki/releases/download/{{ anki_version }}/{{ anki_package }}.tar.zst"
+

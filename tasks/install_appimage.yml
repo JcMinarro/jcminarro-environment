@@ -1,0 +1,26 @@
+---
+- name: Ensure /opt/appimage folder exists
+  become: true
+  ansible.builtin.file:
+    state: directory
+    path: "/opt/appimage"
+    mode: '0755'
+
+- name: "Download AppImage file for {{ appimage_alias }}"
+  become: true
+  ansible.builtin.get_url:
+    url: "{{ appimage_url }}"
+    dest: "/opt/appimage/{{ appimage_url | basename }}"
+    mode: '0755'
+  register: new_appimage
+    
+- name: "Create app alias for {{ appimage_alias }}"
+  become: true
+  ansible.builtin.file:
+    state: link
+    src: "/opt/appimage/{{ appimage_url | basename }}"
+    dest: "/usr/local/bin/{{ appimage_alias }}"
+    owner: root
+    group: root
+  when: new_appimage is changed
+

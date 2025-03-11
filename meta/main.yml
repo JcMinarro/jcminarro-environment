@@ -1,0 +1,12 @@
+---
+galaxy_info:
+  author: Jc Miñarro
+  description: Ansible role to manage my laptop setup
+  license: BSD
+  min_ansible_version: "2.9"
+  platforms:
+    - name: Ubuntu
+      versions:
+        - all
+
+dependencies: []

@@ -1,0 +1,13 @@
+---
+- name: Install required roles
+  hosts: localhost
+  tasks:
+    - name: Install Ansible Galaxy roles
+      command: ansible-galaxy install -r requirements.yml
+      changed_when: false
+
+- name: Configure laptop
+  hosts: localhost
+  become: true
+  roles:
+    - jcminarro-environment

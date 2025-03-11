@@ -1,0 +1,46 @@
+---
+- name: Set default paths
+  ansible.builtin.set_fact:
+    install_dir: "/opt/{{ app_name }}-{{ version }}"
+    default_creates_file: "{{ binary_path }}"
+
+- name: Ensure zstd is installed for .tar.zst files
+  become: true
+  ansible.builtin.apt:
+    name: zstd
+    state: present
+  when: tarball_url is regex('.*\.tar\.zst$')
+  tags:
+    - dependencies
+
+- name: Ensure installation directory exists
+  become: true
+  ansible.builtin.file:
+    state: directory
+    path: "/opt/{{ app_name }}-{{ version }}"
+    mode: '0755'
+
+- name: Check if specific version is already installed
+  ansible.builtin.stat:
+    path: "/opt/{{ app_name }}-{{ version }}/{{ binary_path }}"
+  register: app_binary
+
+- name: Download and extract {{ app_name }} version {{ version }}
+  become: true
+  ansible.builtin.unarchive:
+    src: "{{ tarball_url }}"
+    dest: "/opt/{{ app_name }}-{{ version }}"
+    remote_src: true
+    mode: '0755'
+  when: not app_binary.stat.exists
+  register: new_installation
+
+- name: Update symbolic link for {{ app_name }}
+  become: true
+  ansible.builtin.file:
+    state: link
+    src: "/opt/{{ app_name }}-{{ version }}/{{ binary_path }}"
+    dest: "/usr/local/bin/{{ app_name }}"
+    owner: root
+    group: root
+    force: true 

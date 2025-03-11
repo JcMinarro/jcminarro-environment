@@ -1,0 +1,79 @@
+---
+# Install Anki dependencies
+- name: Install Anki dependencies
+  become: true
+  ansible.builtin.apt:
+    name: "{{ anki_dependencies }}"
+    state: present
+
+# Install Anki using tarball task
+- name: Install Anki
+  ansible.builtin.include_tasks: install_tarball.yml
+  vars:
+    app_name: "anki"
+    version: "{{ anki_version }}"
+    tarball_url: "{{ anki_url }}"
+    binary_path: "{{ anki_package }}/anki"
+
+# Create required directories
+- name: Create Anki directories
+  become: true
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+  with_items:
+    - "/usr/share/pixmaps"
+    - "/usr/share/applications"
+    - "/usr/share/man/man1"
+
+# Copy Anki assets
+- name: Copy Anki assets
+  become: true
+  ansible.builtin.copy:
+    src: "/opt/anki-{{ anki_version }}/{{ anki_package }}/{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: '0644'
+    remote_src: true
+  with_items:
+    - { src: "anki.png", dest: "/usr/share/pixmaps/anki.png" }
+    - { src: "anki.1", dest: "/usr/share/man/man1/anki.1" }
+    - { src: "anki.desktop", dest: "/usr/share/applications/anki.desktop" }
+
+# Install MIME types
+- name: Install Anki MIME types
+  become: true
+  ansible.builtin.copy:
+    src: "/opt/anki-{{ anki_version }}/{{ anki_package }}/anki.xml"
+    dest: "/usr/share/mime/packages/anki.xml"
+    mode: '0644'
+    remote_src: true
+
+# Update MIME database
+- name: Check MIME database timestamp
+  ansible.builtin.stat:
+    path: /usr/share/mime/packages/anki.xml
+  register: mime_file
+
+- name: Update MIME database
+  become: true
+  ansible.builtin.command: update-mime-database /usr/share/mime
+  when: not mime_file.stat.exists
+  changed_when: true
+
+# Set MIME type defaults
+- name: Check current MIME defaults
+  ansible.builtin.command: xdg-mime query default {{ item }}
+  register: mime_defaults
+  changed_when: false
+  with_items:
+    - "application/x-colpkg"
+    - "application/x-apkg"
+    - "application/x-ankiaddon"
+
+- name: Set MIME type defaults
+  become: true
+  ansible.builtin.command: "xdg-mime default anki.desktop {{ item.item }}"
+  when: "'anki.desktop' not in item.stdout"
+  with_items: "{{ mime_defaults.results }}"
+  changed_when: true 

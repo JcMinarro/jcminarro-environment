@@ -1,0 +1,14 @@
+---
+# vars file for jcminarro-environment
+
+# Anki dependencies
+anki_dependencies:
+  - libxcb-xinerama0
+  - libxcb-cursor0
+  - libxkbcommon-x11-0
+  - libqt6multimedia6
+  - libqt6webenginecore6
+  - libqt6webenginewidgets6
+  - xdg-utils
+
+# Otras dependencias y configuraciones aquí...
