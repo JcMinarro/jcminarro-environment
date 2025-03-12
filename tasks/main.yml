@@ -72,6 +72,9 @@
       
       # Security
       - 1password
+
+      # Image Editing
+      - gimp
   tags:
     - packages
     - system

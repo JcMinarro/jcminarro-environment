@@ -60,6 +60,9 @@ This role installs and configures:
 - Zoom
 - Discord
 
+### Image Editing
+- GIMP (GNU Image Manipulation Program)
+
 ## Tags
 
 You can use tags to run specific parts of the role:
