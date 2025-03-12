@@ -39,6 +39,7 @@ This role installs and configures:
 - SDKMAN (for Java development)
 - Visual Studio Code
 - Sublime Text
+- colordiff (Colored diff output)
 
 ### System Utilities
 - htop, btop

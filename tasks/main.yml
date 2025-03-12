@@ -52,6 +52,7 @@
       - vim
       - git
       - jq
+      - colordiff
       
       # Editors
       - sublime-text
