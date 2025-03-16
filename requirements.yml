@@ -1,6 +1,6 @@
 ---
 roles:
   - name: gantsign.sdkman
-    version: "3.0.0"
+    version: "2.2.0"
   - name: darkwizard242.googlechrome
-    version: "5.0.5" 
+    version: "3.1.0" 
