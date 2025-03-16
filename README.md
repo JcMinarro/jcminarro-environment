@@ -47,6 +47,7 @@ This role installs and configures:
 - zip/unzip
 - nmap
 - jq
+- wireguard
 
 ### Applications
 - Google Chrome

@@ -66,6 +66,7 @@
       - unzip
       - aptitude
       - libfuse2t64
+      - wireguard
       
       # Terminal
       - guake
