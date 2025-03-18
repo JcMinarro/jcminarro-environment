@@ -4,3 +4,5 @@ roles:
     version: "2.2.0"
   - name: darkwizard242.googlechrome
     version: "3.1.0" 
+  - name: darkwizard242.vscode
+    version: "1.5.0"

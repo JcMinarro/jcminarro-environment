@@ -9,6 +9,7 @@ This role requires Ansible 2.9 or higher and has been tested on Ubuntu.
 The following roles are used:
 - [gantsign.sdkman](https://galaxy.ansible.com/ui/standalone/roles/gantsign/sdkman/documentation/)
 - [darkwizard242.googlechrome](https://galaxy.ansible.com/ui/standalone/roles/darkwizard242/googlechrome/)
+- [darkwizard242.vscode](https://galaxy.ansible.com/ui/standalone/roles/darkwizard242/vscode/)
 
 ## Installation
 
@@ -37,7 +38,7 @@ This role installs and configures:
 ### Development Tools
 - Git
 - SDKMAN (for Java development)
-- Visual Studio Code
+- Visual Studio Code (with darkwizard242.vscode)
 - Sublime Text
 - colordiff (Colored diff output)
 

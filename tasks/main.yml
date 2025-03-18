@@ -127,6 +127,14 @@
   tags:
     - browsers
 
+- name: Install VS Code
+  include_role:
+    name: darkwizard242.vscode
+  vars:
+    ansible_become: true
+  tags:
+    - development
+    - vscode
 
 # Install Anki
 - name: Install Anki
