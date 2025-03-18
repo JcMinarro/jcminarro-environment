@@ -6,3 +6,6 @@ anki_version: "25.02"
 anki_package: "anki-{{ anki_version }}-linux-qt6"
 anki_url: "https://github.com/ankitects/anki/releases/download/{{ anki_version }}/{{ anki_package }}.tar.zst"
 
+# Node.js
+nodejs_version: "20.x"  # LTS version
+

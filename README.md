@@ -41,6 +41,7 @@ This role installs and configures:
 - Visual Studio Code (with darkwizard242.vscode)
 - Sublime Text
 - colordiff (Colored diff output)
+- Node.js LTS & npm (managed with n version manager)
 
 ### System Utilities
 - htop, btop
@@ -64,6 +65,14 @@ This role installs and configures:
 
 ### Image Editing
 - GIMP (GNU Image Manipulation Program)
+
+## Usage Notes
+
+### Node.js Management
+Node.js is installed using `n` version manager. You can:
+- Update to latest LTS: `n lts`
+- Install specific version: `n <version>`
+- List installed versions: `n ls`
 
 ## Tags
 
