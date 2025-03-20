@@ -42,6 +42,7 @@ This role installs and configures:
 - Sublime Text
 - colordiff (Colored diff output)
 - Node.js LTS & npm (managed with n version manager)
+- Docker & Docker Compose
 
 ### System Utilities
 - htop, btop
@@ -73,6 +74,12 @@ Node.js is installed using `n` version manager. You can:
 - Update to latest LTS: `n lts`
 - Install specific version: `n <version>`
 - List installed versions: `n ls`
+
+### Docker
+The installation:
+- Installs Docker CE and Docker Compose
+- Adds your user to the docker group (requires logout/login to take effect)
+- Includes buildx and compose plugins
 
 ## Tags
 
