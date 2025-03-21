@@ -51,6 +51,7 @@ This role installs and configures:
 - nmap
 - jq
 - wireguard
+- sshpass
 
 ### Applications
 - Google Chrome

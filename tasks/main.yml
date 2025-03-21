@@ -67,6 +67,7 @@
       - aptitude
       - libfuse2t64
       - wireguard
+      - sshpass
       
       # Terminal
       - guake
