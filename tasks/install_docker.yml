@@ -11,14 +11,6 @@
     update_cache: true
   tags: docker
 
-- name: Create Docker keyring directory
-  become: true
-  ansible.builtin.file:
-    path: /etc/apt/keyrings
-    state: directory
-    mode: '0755'
-  tags: docker
-
 - name: Add Docker GPG key
   become: true
   ansible.builtin.shell: |

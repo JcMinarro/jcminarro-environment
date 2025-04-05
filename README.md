@@ -50,8 +50,13 @@ This role installs and configures:
 - zip/unzip
 - nmap
 - jq
-- wireguard
 - sshpass
+
+### Network Tools
+- Tailscale
+- iperf3
+- nmap
+- wireguard
 
 ### Applications
 - Google Chrome
