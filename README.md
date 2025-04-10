@@ -70,8 +70,9 @@ This role installs and configures:
 - Zoom
 - Discord
 
-### Image Editing
+### Multimedia
 - GIMP (GNU Image Manipulation Program)
+- Peek
 
 ## Usage Notes
 

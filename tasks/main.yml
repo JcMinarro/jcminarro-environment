@@ -89,8 +89,9 @@
       # Security
       - 1password
 
-      # Image Editing
+      # Multimedia
       - gimp
+      - peek
 
       # Network Tools
       - tailscale
