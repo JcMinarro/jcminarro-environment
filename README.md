@@ -51,6 +51,7 @@ This role installs and configures:
 - nmap
 - jq
 - sshpass
+- Flameshot (Screenshot tool)
 
 ### Network Tools
 - Tailscale
