@@ -95,6 +95,7 @@
 
       # Network Tools
       - tailscale
+      - traceroute
 
       # Screenshot Tools
       - flameshot

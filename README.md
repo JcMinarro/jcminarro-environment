@@ -58,6 +58,7 @@ This role installs and configures:
 - iperf3
 - nmap
 - wireguard
+- traceroute
 
 ### Applications
 - Google Chrome
