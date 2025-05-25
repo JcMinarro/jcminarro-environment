@@ -52,6 +52,7 @@ This role installs and configures:
 - jq
 - sshpass
 - Flameshot (Screenshot tool)
+- Obsidian
 
 ### Network Tools
 - Tailscale
