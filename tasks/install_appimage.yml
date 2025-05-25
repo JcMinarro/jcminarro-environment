@@ -13,14 +13,20 @@
     dest: "/opt/appimage/{{ appimage_url | basename }}"
     mode: '0755'
   register: new_appimage
-    
-- name: "Create app alias for {{ appimage_alias }}"
+
+- name: "Remove existing symlink if exists"
   become: true
   ansible.builtin.file:
-    state: link
-    src: "/opt/appimage/{{ appimage_url | basename }}"
-    dest: "/usr/local/bin/{{ appimage_alias }}"
-    owner: root
-    group: root
+    path: "/usr/local/bin/{{ appimage_alias }}"
+    state: absent
   when: new_appimage is changed
+
+- name: "Create wrapper script for {{ appimage_alias }}"
+  become: true
+  ansible.builtin.copy:
+    content: |
+      #!/bin/bash
+      /opt/appimage/{{ appimage_url | basename }} {% if appimage_flags is defined %}{{ appimage_flags }}{% endif %} "$@"
+    dest: "/usr/local/bin/{{ appimage_alias }}"
+    mode: '0755'
 
