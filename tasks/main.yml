@@ -92,6 +92,7 @@
       # Multimedia
       - gimp
       - peek
+      - vlc
 
       # Network Tools
       - tailscale

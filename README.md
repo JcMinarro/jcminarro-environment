@@ -76,6 +76,7 @@ This role installs and configures:
 ### Multimedia
 - GIMP (GNU Image Manipulation Program)
 - Peek
+- VLC
 
 ## Usage Notes
 
