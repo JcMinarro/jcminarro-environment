@@ -67,6 +67,7 @@ This role installs and configures:
 - Anki
 - 1Password
 - Nextcloud Desktop
+- SuperProductivity
 
 ### Communication
 - Slack

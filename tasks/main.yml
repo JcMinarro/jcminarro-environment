@@ -119,6 +119,9 @@
     - appimage_url: "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.8.10/Obsidian-1.8.10.AppImage"
       appimage_alias: obsidian
       appimage_flags: "--no-sandbox"
+    - appimage_url: "https://github.com/johannesjo/super-productivity/releases/download/v14.2.2/superProductivity-x86_64.AppImage"
+      appimage_alias: superProductivity
+      appimage_flags: "--no-sandbox"
   tags:
     - appimages
 
