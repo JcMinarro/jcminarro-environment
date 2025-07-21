@@ -78,6 +78,7 @@
       - nmap
       - zip
       - unzip
+      - xz-utils
       - aptitude
       - libfuse2t64
       - wireguard

@@ -48,6 +48,7 @@ This role installs and configures:
 - htop, btop
 - vim
 - zip/unzip
+- xz-utils
 - nmap
 - jq
 - sshpass
