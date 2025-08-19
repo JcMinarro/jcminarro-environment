@@ -114,7 +114,7 @@
     - appimage_alias: "{{ item.appimage_alias }}"
     - appimage_flags: "{{ item.appimage_flags | default('') }}"
   with_items:
-    - appimage_url: "https://github.com/nextcloud-releases/desktop/releases/download/v3.16.6/Nextcloud-3.16.6-x86_64.AppImage"
+    - appimage_url: "https://github.com/nextcloud-releases/desktop/releases/download/v3.17.1/Nextcloud-3.17.1-x86_64.AppImage"
       appimage_alias: nextcloud
     - appimage_url: "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.8.10/Obsidian-1.8.10.AppImage"
       appimage_alias: obsidian
