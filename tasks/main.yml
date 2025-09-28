@@ -46,8 +46,6 @@
   with_items:
     - repo: "deb [signed-by=/etc/apt/keyrings/sublimehq-pub.gpg] https://download.sublimetext.com/ apt/stable/"
       filename: sublime
-    - repo: "deb [arch=amd64 signed-by=/etc/apt/keyrings/1password.gpg] https://downloads.1password.com/linux/debian/amd64 stable main"
-      filename: 1password
     - repo: "deb [signed-by=/etc/apt/keyrings/tailscale.gpg] https://pkgs.tailscale.com/stable/ubuntu {{ ansible_distribution_release }} main"
       filename: tailscale
   tags:
@@ -168,6 +166,12 @@
   tags:
     - development
     - vscode
+
+- name: Install 1Password
+  include_role:
+    name: darkwizard242.onepassword
+  vars:
+    onepassword_desired_state: latest
 
 # Install Anki
 - name: Install Anki
