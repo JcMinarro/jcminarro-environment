@@ -116,7 +116,7 @@
   with_items:
     - appimage_url: "https://github.com/nextcloud-releases/desktop/releases/download/v3.17.2/Nextcloud-3.17.2-x86_64.AppImage"
       appimage_alias: nextcloud
-    - appimage_url: "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.8.10/Obsidian-1.8.10.AppImage"
+    - appimage_url: "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.9.12/Obsidian-1.9.12.AppImage"
       appimage_alias: obsidian
       appimage_flags: "--no-sandbox"
     - appimage_url: "https://github.com/johannesjo/super-productivity/releases/download/v14.2.4/superProductivity-x86_64.AppImage"
