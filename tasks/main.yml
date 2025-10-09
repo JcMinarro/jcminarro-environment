@@ -120,6 +120,8 @@
     - appimage_url: "https://github.com/johannesjo/super-productivity/releases/download/v14.2.4/superProductivity-x86_64.AppImage"
       appimage_alias: superProductivity
       appimage_flags: "--no-sandbox"
+    - appimage_url: "https://github.com/Martichou/rquickshare/releases/download/v0.11.5/r-quick-share-main_v0.11.5_glibc-2.39_amd64.AppImage"
+      appimage_alias: rquickshare
   tags:
     - appimages
 
