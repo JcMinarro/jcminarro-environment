@@ -181,8 +181,8 @@
   tags:
     - anki
 
-# Install Docker
-- name: Install Docker
+# Install NodeJS
+- name: Install NodeJS
   ansible.builtin.include_tasks: install_nodejs.yml
   tags:
     - nodejs
