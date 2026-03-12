@@ -43,6 +43,7 @@ This role installs and configures:
 - colordiff (Colored diff output)
 - Node.js LTS & npm (managed with n version manager)
 - Docker & Docker Compose
+- OpenCode (AI coding agent)
 
 ### System Utilities
 - htop, btop
@@ -82,6 +83,14 @@ This role installs and configures:
 
 ## Usage Notes
 
+### OpenCode
+OpenCode is an AI coding agent installed as a standalone binary. After installation:
+- The binary is installed in `~/.opencode/bin/opencode`
+- Your PATH is automatically configured in `.bashrc`
+- Run `opencode` in any project directory to start
+- Use `/connect` to configure your LLM provider
+- Visit [opencode.ai](https://opencode.ai) for more documentation
+
 ### Node.js Management
 Node.js is installed using `n` version manager. You can:
 - Update to latest LTS: `n lts`
@@ -105,12 +114,16 @@ ansible-playbook -K provision.yml --tags "anki"
 # Install development tools
 ansible-playbook -K provision.yml --tags "development"
 
+# Install OpenCode only
+ansible-playbook -K provision.yml --tags "opencode"
+
 # Install communication apps
 ansible-playbook -K provision.yml --tags "communication"
 ```
 
 Available tags:
 - `anki`
+- `opencode`
 - `development`
 - `communication`
 - `browsers`

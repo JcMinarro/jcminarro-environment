@@ -194,3 +194,10 @@
   tags:
     - docker
     - development
+
+# Install OpenCode
+- name: Install OpenCode
+  ansible.builtin.include_tasks: install_opencode.yml
+  tags:
+    - opencode
+    - development
