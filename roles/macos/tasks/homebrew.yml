@@ -1,0 +1,17 @@
+---
+# Setup Homebrew
+
+- name: Update Homebrew
+  community.general.homebrew:
+    update_homebrew: true
+  tags:
+    - homebrew
+
+- name: Tap Homebrew repositories
+  community.general.homebrew_tap:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ homebrew_taps }}"
+  when: homebrew_taps | length > 0
+  tags:
+    - homebrew

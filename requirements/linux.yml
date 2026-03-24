@@ -1,0 +1,16 @@
+---
+# Requirements específicos para Linux (Ubuntu/Debian)
+# Estos roles dependen de apt y solo funcionan en Linux
+
+roles:
+  - name: darkwizard242.googlechrome
+    version: "3.1.0"
+    # Instala Google Chrome via apt
+    
+  - name: darkwizard242.vscode
+    version: "1.5.0"
+    # Instala Visual Studio Code via apt
+    
+  - name: darkwizard242.onepassword
+    version: "2.5.1"
+    # Instala 1Password via apt

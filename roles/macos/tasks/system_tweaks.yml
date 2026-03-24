@@ -1,0 +1,71 @@
+---
+# Apply macOS system tweaks
+# These are optional and can be enabled via apply_macos_tweaks variable
+
+- name: Show hidden files in Finder
+  community.general.osx_defaults:
+    domain: com.apple.finder
+    key: AppleShowAllFiles
+    type: bool
+    value: "{{ macos_system_tweaks.show_hidden_files | default(true) }}"
+    state: present
+  notify: Restart Finder
+
+- name: Show path bar in Finder
+  community.general.osx_defaults:
+    domain: com.apple.finder
+    key: ShowPathbar
+    type: bool
+    value: "{{ macos_system_tweaks.show_path_bar | default(true) }}"
+    state: present
+  notify: Restart Finder
+
+- name: Show status bar in Finder
+  community.general.osx_defaults:
+    domain: com.apple.finder
+    key: ShowStatusBar
+    type: bool
+    value: "{{ macos_system_tweaks.show_status_bar | default(true) }}"
+    state: present
+  notify: Restart Finder
+
+- name: Enable Dock autohide
+  community.general.osx_defaults:
+    domain: com.apple.dock
+    key: autohide
+    type: bool
+    value: "{{ macos_system_tweaks.autohide | default(true) }}"
+    state: present
+  notify: Restart Dock
+
+- name: Set key repeat rate
+  community.general.osx_defaults:
+    domain: NSGlobalDomain
+    key: KeyRepeat
+    type: int
+    value: "{{ macos_system_tweaks.key_repeat | default(2) }}"
+    state: present
+
+- name: Set initial key repeat delay
+  community.general.osx_defaults:
+    domain: NSGlobalDomain
+    key: InitialKeyRepeat
+    type: int
+    value: "{{ macos_system_tweaks.initial_key_repeat | default(15) }}"
+    state: present
+
+- name: Enable tap to click
+  community.general.osx_defaults:
+    domain: com.apple.AppleMultitouchTrackpad
+    key: Clicking
+    type: bool
+    value: "{{ macos_system_tweaks.tap_to_click | default(true) }}"
+    state: present
+
+- name: Set scroll direction
+  community.general.osx_defaults:
+    domain: NSGlobalDomain
+    key: com.apple.swipescrolldirection
+    type: bool
+    value: "{{ macos_system_tweaks.scroll_direction | default(true) }}"
+    state: present

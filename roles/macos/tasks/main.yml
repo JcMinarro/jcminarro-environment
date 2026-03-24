@@ -1,0 +1,81 @@
+---
+# Main tasks file for macOS role
+
+- name: Check if Homebrew is installed
+  ansible.builtin.stat:
+    path: "{{ homebrew_prefix }}/bin/brew"
+  register: homebrew_check
+
+- name: Install Homebrew
+  ansible.builtin.shell: |
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  when: not homebrew_check.stat.exists
+  environment:
+    CI: "true"
+
+- name: Ensure Homebrew is in PATH
+  ansible.builtin.lineinfile:
+    path: "{{ home_directory }}/.zshrc"
+    line: 'eval "$({{ homebrew_prefix }}/bin/brew shellenv)"'
+    state: present
+
+- name: Setup Homebrew
+  ansible.builtin.import_tasks: homebrew.yml
+  tags:
+    - macos
+    - homebrew
+
+- name: Install Homebrew formulas
+  ansible.builtin.import_tasks: formulas.yml
+  tags:
+    - macos
+    - homebrew
+    - formulas
+
+- name: Install Homebrew casks
+  ansible.builtin.import_tasks: casks.yml
+  tags:
+    - macos
+    - homebrew
+    - casks
+
+- name: Install SDKMan
+  ansible.builtin.import_tasks: sdkman.yml
+  tags:
+    - macos
+    - sdkman
+    - development
+
+- name: Install Node.js
+  ansible.builtin.import_tasks: nodejs.yml
+  tags:
+    - macos
+    - nodejs
+    - development
+
+- name: Install OpenCode
+  ansible.builtin.import_tasks: opencode.yml
+  tags:
+    - macos
+    - opencode
+    - development
+
+- name: Configure Docker Desktop
+  ansible.builtin.import_tasks: docker.yml
+  tags:
+    - macos
+    - docker
+    - development
+
+- name: Install Anki
+  ansible.builtin.import_tasks: anki.yml
+  tags:
+    - macos
+    - anki
+
+- name: Apply macOS system tweaks
+  ansible.builtin.import_tasks: system_tweaks.yml
+  tags:
+    - macos
+    - system
+  when: apply_macos_tweaks | bool

@@ -1,0 +1,31 @@
+---
+# Install OpenCode (AI coding assistant)
+# This works the same on Linux and macOS
+
+- name: Check if OpenCode is already installed
+  ansible.builtin.stat:
+    path: "{{ home_directory }}/.opencode/bin/opencode"
+  register: opencode_installed
+
+- name: Download and install OpenCode
+  ansible.builtin.shell: |
+    curl -fsSL https://opencode.ai/install | bash
+  args:
+    creates: "{{ home_directory }}/.opencode/bin/opencode"
+  when: not opencode_installed.stat.exists
+  environment:
+    HOME: "{{ home_directory }}"
+
+- name: Ensure OpenCode is in PATH (bash)
+  ansible.builtin.lineinfile:
+    path: "{{ home_directory }}/.bashrc"
+    line: "export PATH={{ home_directory }}/.opencode/bin:$PATH"
+    regexp: "^export PATH=.*\\.opencode/bin"
+    state: present
+
+- name: Ensure OpenCode is in PATH (zsh)
+  ansible.builtin.lineinfile:
+    path: "{{ home_directory }}/.zshrc"
+    line: "export PATH={{ home_directory }}/.opencode/bin:$PATH"
+    regexp: "^export PATH=.*\\.opencode/bin"
+    state: present

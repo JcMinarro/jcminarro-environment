@@ -1,0 +1,11 @@
+---
+# Install Homebrew formulas (CLI tools)
+
+- name: Install Homebrew formulas
+  community.general.homebrew:
+    name: "{{ brew_formulas }}"
+    state: present
+    update_homebrew: false
+  tags:
+    - formulas
+    - homebrew

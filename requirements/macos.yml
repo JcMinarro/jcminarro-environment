@@ -1,0 +1,11 @@
+---
+# Requirements specific for macOS
+# NOTE: We currently don't use Galaxy roles for macOS
+# Instead, we use Homebrew via Ansible modules:
+# - community.general.homebrew (for CLI formulas)
+# - community.general.homebrew_cask (for GUI applications)
+#
+# If in the future macOS-specific Galaxy roles appear,
+# they can be added here.
+
+roles: []

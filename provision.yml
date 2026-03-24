@@ -1,13 +1,128 @@
 ---
-- name: Install required roles
+# Main playbook to configure development environment
+# This playbook detects the OS and applies the appropriate configuration
+
+# =============================================================================
+# PHASE 1: Install Galaxy roles (OS-specific)
+# =============================================================================
+
+- name: Install Galaxy roles for Linux
   hosts: localhost
+  connection: local
+  gather_facts: true
   tasks:
-    - name: Install Ansible Galaxy roles
-      command: ansible-galaxy install -r requirements.yml
+    - name: Install Linux-specific Galaxy roles
+      ansible.builtin.command: |
+        ansible-galaxy install -r requirements/linux.yml --force
+      changed_when: false
+      when: ansible_os_family in ["Debian", "RedHat"]
+
+    - name: Install common Galaxy roles (all OS)
+      ansible.builtin.command: |
+        ansible-galaxy install -r requirements/common.yml --force
       changed_when: false
 
-- name: Configure laptop
+  tags:
+    - always
+    - requirements
+
+# =============================================================================
+# PHASE 2: Apply common configuration (OS-agnostic)
+# =============================================================================
+
+- name: Apply common configuration
   hosts: localhost
+  connection: local
+  gather_facts: true
+  roles:
+    - role: common
+      tags:
+        - common
+        - always
+
+  tags:
+    - always
+    - common
+
+# =============================================================================
+# PHASE 3: Apply OS-specific configuration
+# =============================================================================
+
+- name: Apply Linux-specific configuration
+  hosts: localhost
+  connection: local
+  gather_facts: true
   become: true
   roles:
-    - jcminarro-environment
+    - role: linux
+      when: ansible_os_family in ["Debian", "RedHat"]
+      tags:
+        - linux
+        - ubuntu
+        - debian
+
+  tags:
+    - linux
+    - ubuntu
+
+- name: Apply macOS-specific configuration
+  hosts: localhost
+  connection: local
+  gather_facts: true
+  become: false
+  roles:
+    - role: macos
+      when: ansible_os_family == "Darwin"
+      tags:
+        - macos
+        - darwin
+        - apple
+
+  tags:
+    - macos
+    - darwin
+
+# =============================================================================
+# PHASE 4: Post-configuration verification
+# =============================================================================
+
+- name: Verify installation
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  tasks:
+    - name: Display completion message
+      ansible.builtin.debug:
+        msg: |
+          ============================================
+          Setup completed successfully!
+          ============================================
+          
+          Operating System: {{ ansible_distribution }} {{ ansible_distribution_version }}
+          Architecture: {{ ansible_architecture }}
+          
+          Common tools installed:
+          - Git, Vim, SDKMan, Node.js (n), OpenCode
+          
+          {% if ansible_os_family in ["Debian", "RedHat"] %}
+          Linux-specific:
+          - Apt packages, Docker Engine, Snap packages
+          - AppImages
+          {% endif %}
+          
+          {% if ansible_os_family == "Darwin" %}
+          macOS-specific:
+          - Homebrew formulas and casks
+          - Docker Desktop
+          {% endif %}
+          
+          ============================================
+          Next steps:
+          1. Restart your terminal
+          2. Run 'exec $SHELL -l' to reload shell
+          3. Start using your tools!
+          ============================================
+
+  tags:
+    - always
+    - verify

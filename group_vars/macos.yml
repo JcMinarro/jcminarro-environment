@@ -1,0 +1,205 @@
+---
+# Variables specific for macOS (Darwin)
+# These variables only apply to macOS systems
+
+# ============================================
+# HOMEBREW CONFIGURATION
+# ============================================
+
+# Homebrew installation path (Apple Silicon)
+homebrew_prefix: "/opt/homebrew"
+homebrew_bin: "{{ homebrew_prefix }}/bin"
+
+# Homebrew repositories to tap (if needed)
+homebrew_taps: []
+  # - homebrew/cask-versions  # For beta/alpha versions
+  # - homebrew/cask-fonts   # For fonts
+
+# ============================================
+# HOMEBREW FORMULAS (CLI tools)
+# ============================================
+
+brew_formulas:
+  # Development Tools
+  - git
+  - vim
+  - jq
+  - colordiff
+  - tree
+  - wget
+  - curl
+  
+  # System Utilities
+  - htop
+  - btop
+  - iperf3
+  - nmap
+  - p7zip
+  - xz
+  - sshpass
+  
+  # Network Tools
+  - mtr
+  - tailscale
+  
+  # Terminal
+  - zsh
+  - zsh-completions
+  
+  # Multimedia (CLI)
+  - ffmpeg
+  - imagemagick
+  
+  # Others
+  - openssl
+  - readline
+  - sqlite3
+
+# ============================================
+# HOMEBREW CASKS (GUI Applications)
+# ============================================
+
+brew_casks:
+  # Browsers
+  - google-chrome
+  
+  # Development
+  - visual-studio-code
+  - sublime-text
+  - docker
+  - iterm2
+  
+  # Communication
+  - slack
+  - telegram
+  - zoom
+  - discord
+  
+  # Productivity
+  - obsidian
+  - 1password
+  - nextcloud
+  
+  # Multimedia
+  - vlc
+  - gimp
+  
+  # Tools
+  - flameshot
+  - anki
+  - tailscale
+  
+  # Replacement for peek (GIF recording)
+  - licecap
+
+# ============================================
+# MAC APP STORE APPS (Optional)
+# ============================================
+
+# Apps to install from Mac App Store
+# Requires `mas` (Mac App Store CLI) to be installed
+mac_app_store_apps: []
+  # - 1451685025  # WireGuard
+  # - 497799835   # Xcode
+
+# ============================================
+# DOCKER DESKTOP CONFIGURATION
+# ============================================
+
+docker_desktop_settings:
+  resources:
+    cpus: 4
+    memory_mb: 8192
+    disk_size_gb: 64
+  features:
+    rosetta_emulation: true  # For x86 containers on ARM64
+    kubernetes: false
+  network:
+    http_proxy: ""
+
+# ============================================
+# ANKI CONFIGURATION (macOS)
+# ============================================
+
+anki_macos_version: "{{ anki_version }}"
+anki_macos_package: "anki-{{ anki_macos_version }}-mac-apple-qt6"
+anki_macos_url: "https://github.com/ankitects/anki/releases/download/{{ anki_macos_version }}/{{ anki_macos_package }}.dmg"
+anki_macos_install_method: "dmg"  # Options: dmg, cask (if available)
+
+# ============================================
+# TERMINAL CONFIGURATION
+# ============================================
+
+# Default shell (macOS uses zsh by default since Catalina)
+default_shell: "zsh"
+terminal_app: "iterm2"
+
+# iTerm2 configuration (optional)
+iterm2_configure: true
+iterm2_hotkey: "⌃⌥⌘T"  # Ctrl+Alt+Cmd+T
+
+# ============================================
+# DOTFILES (macOS-specific)
+# ============================================
+
+macos_dotfiles:
+  - name: zshrc
+    src: zshrc
+    dest: "{{ home_directory }}/.zshrc"
+  - name: gitconfig
+    src: gitconfig
+    dest: "{{ home_directory }}/.gitconfig"
+
+# ============================================
+# REPLACEMENTS FOR LINUX-ONLY APPS
+# ============================================
+
+# Mapping of Linux apps to macOS alternatives
+app_replacements:
+  peek:
+    macos: licecap
+    description: "GIF screen recorder"
+  
+  guake:
+    macos: iterm2_hotkey
+    description: "Hotkey terminal"
+  
+  rquickshare:
+    macos: localsend
+    description: "Local file sharing"
+    install: "brew install --cask localsend"
+  
+  wireguard_cli:
+    macos: wireguard_mac_app_store
+    description: "WireGuard VPN"
+  
+  superproductivity:
+    macos: superproductivity
+    description: "Productivity app"
+    note: "Check if available as cask, otherwise manual install"
+
+# ============================================
+# SYSTEM TWEAKS (Optional)
+# ============================================
+
+# macOS system preferences to configure
+macos_system_tweaks:
+  # Finder
+  show_hidden_files: true
+  show_path_bar: true
+  show_status_bar: true
+  
+  # Dock
+  autohide: true
+  minimize_to_application: true
+  
+  # Keyboard
+  key_repeat: 2  # Fast
+  initial_key_repeat: 15
+  
+  # Trackpad
+  tap_to_click: true
+  scroll_direction: natural  # true = natural scrolling
+
+# Whether to apply system tweaks
+apply_macos_tweaks: false  # Set to true to enable

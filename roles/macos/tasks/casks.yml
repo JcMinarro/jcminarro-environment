@@ -1,0 +1,19 @@
+---
+# Install Homebrew casks (GUI applications)
+
+- name: Install Homebrew casks
+  community.general.homebrew_cask:
+    name: "{{ item }}"
+    state: present
+    install_options: "appdir=/Applications"
+  loop: "{{ brew_casks }}"
+  tags:
+    - casks
+    - homebrew
+
+- name: Accept Xcode license (if needed)
+  ansible.builtin.command: xcodebuild -license accept
+  ignore_errors: true
+  tags:
+    - casks
+    - xcode

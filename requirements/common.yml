@@ -1,0 +1,15 @@
+---
+# Requirements for roles shared between Linux and macOS
+# These roles work on both operating systems
+
+roles:
+  - name: gantsign.sdkman
+    version: "2.2.0"
+    # SDKMan works the same on Linux and macOS
+    # Manages Java, Kotlin, Gradle, etc. versions
+
+# Note: darkwizard242 roles only work on Linux (apt-based)
+# For macOS, we use homebrew instead of these roles:
+# - darkwizard242.googlechrome → homebrew_cask: google-chrome
+# - darkwizard242.vscode → homebrew_cask: visual-studio-code  
+# - darkwizard242.onepassword → homebrew_cask: 1password
