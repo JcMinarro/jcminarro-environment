@@ -2,18 +2,22 @@
 # Install Docker Engine
 
 - name: Create Docker keyrings directory
+  become: true
   ansible.builtin.file:
     path: "{{ docker_keyrings_dir }}"
     state: directory
     mode: '0755'
 
 - name: Add Docker GPG key
+  become: true
   ansible.builtin.shell: |
-    curl -fsSL {{ docker_gpg_key_url }} | gpg --dearmor -o {{ docker_keyrings_dir }}/docker.gpg
+    curl -fsSL "{{ docker_gpg_key_url }}" -o "{{ docker_keyrings_dir }}/docker.gpg"
+    chmod 0644 "{{ docker_keyrings_dir }}/docker.gpg"
   args:
     creates: "{{ docker_keyrings_dir }}/docker.gpg"
 
 - name: Add Docker repository
+  become: true
   ansible.builtin.apt_repository:
     repo: "{{ docker_repo }}"
     filename: docker
@@ -21,12 +25,14 @@
     update_cache: true
 
 - name: Install Docker packages
+  become: true
   ansible.builtin.apt:
     name: "{{ docker_packages }}"
     state: present
     update_cache: true
 
 - name: Add user to docker group
+  become: true
   ansible.builtin.user:
     name: "{{ current_user }}"
     groups: docker
@@ -34,6 +40,7 @@
   notify: Restart Docker
 
 - name: Start and enable Docker service
+  become: true
   ansible.builtin.service:
     name: docker
     state: started

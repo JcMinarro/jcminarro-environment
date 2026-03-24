@@ -51,6 +51,7 @@
     sdk install java {{ item }}
   args:
     creates: "{{ home_directory }}/.sdkman/candidates/java/{{ item }}"
+    executable: /bin/bash
   loop:
     - 21.0.2-tem  # Latest LTS
     - 17.0.9-tem  # Previous LTS
@@ -63,6 +64,8 @@
   ansible.builtin.shell: |
     source "$HOME/.sdkman/bin/sdkman-init.sh"
     sdk default java 21.0.2-tem
+  args:
+    executable: /bin/bash
   when: install_sdkman | bool
   environment:
     HOME: "{{ home_directory }}"

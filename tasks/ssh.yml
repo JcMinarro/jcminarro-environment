@@ -19,10 +19,6 @@
     block: |
       # Default settings
       Host *
-          AddKeysToAgent yes
-          UseKeychain yes
-          IdentityFile ~/.ssh/id_ed25519
-          IdentityFile ~/.ssh/id_rsa
           IdentityAgent ~/.1password/agent.sock
           IdentitiesOnly yes
           ServerAliveInterval 60

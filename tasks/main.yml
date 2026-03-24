@@ -6,9 +6,9 @@
   ansible.builtin.import_tasks: common.yml
 
 - name: Include Linux tasks
-  ansible.builtin.import_tasks: linux.yml
+  ansible.builtin.include_tasks: linux.yml
   when: ansible_os_family in ["Debian", "RedHat"]
 
 - name: Include macOS tasks
-  ansible.builtin.import_tasks: macos.yml
+  ansible.builtin.include_tasks: macos.yml
   when: ansible_os_family == "Darwin"

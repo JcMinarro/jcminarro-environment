@@ -2,18 +2,18 @@
 # Install Node.js using n (Node version manager)
 # This works the same on Linux and macOS
 
-- name: Check if n is installed
-  ansible.builtin.stat:
-    path: /usr/local/bin/n
-  register: n_installed
-
 - name: Install build dependencies (Linux only)
+  become: true
   ansible.builtin.package:
     name:
       - build-essential
     state: present
   when: ansible_os_family in ["Debian", "RedHat"]
-  become: true
+
+- name: Check if n is installed
+  ansible.builtin.stat:
+    path: "{{ home_directory }}/n/bin/n"
+  register: n_installed
 
 - name: Download n installer
   ansible.builtin.get_url:
@@ -22,31 +22,45 @@
     mode: '0755'
 
 - name: Install n
-  ansible.builtin.command: /tmp/n lts
+  ansible.builtin.shell: |
+    export N_PREFIX="{{ home_directory }}/n"
+    /tmp/n {{ n_version }}
   args:
-    creates: /usr/local/bin/n
-  become: true
+    creates: "{{ home_directory }}/n/bin/n"
   when: not n_installed.stat.exists
 
+- name: Ensure n and node are in PATH (bash)
+  ansible.builtin.blockinfile:
+    path: "{{ home_directory }}/.bashrc"
+    block: |
+      export N_PREFIX="$HOME/n"
+      export PATH="$N_PREFIX/bin:$PATH"
+    marker: "# {mark} ANSIBLE MANAGED BLOCK - n (Node version manager)"
+    create: true
+
+- name: Ensure n and node are in PATH (zsh)
+  ansible.builtin.blockinfile:
+    path: "{{ home_directory }}/.zshrc"
+    block: |
+      export N_PREFIX="$HOME/n"
+      export PATH="$N_PREFIX/bin:$PATH"
+    marker: "# {mark} ANSIBLE MANAGED BLOCK - n (Node version manager)"
+    create: true
+
 - name: Install latest npm
-  ansible.builtin.command: npm install -g npm@latest
+  ansible.builtin.shell: |
+    export N_PREFIX="{{ home_directory }}/n"
+    export PATH="$N_PREFIX/bin:$PATH"
+    npm install -g npm@latest
+  args:
+    executable: /bin/bash
   changed_when: false
-  become: true
 
 - name: Install pnpm
-  ansible.builtin.command: npm install -g pnpm
+  ansible.builtin.shell: |
+    export N_PREFIX="{{ home_directory }}/n"
+    export PATH="$N_PREFIX/bin:$PATH"
+    npm install -g pnpm
   args:
-    creates: /usr/local/bin/pnpm
-  become: true
-
-- name: Ensure n is in PATH (bash)
-  ansible.builtin.lineinfile:
-    path: "{{ home_directory }}/.bashrc"
-    line: 'export N_PREFIX="$HOME/n" && export PATH="$N_PREFIX/bin:$PATH"'
-    state: present
-
-- name: Ensure n is in PATH (zsh)
-  ansible.builtin.lineinfile:
-    path: "{{ home_directory }}/.zshrc"
-    line: 'export N_PREFIX="$HOME/n" && export PATH="$N_PREFIX/bin:$PATH"'
-    state: present
+    creates: "{{ home_directory }}/n/bin/pnpm"
+    executable: /bin/bash

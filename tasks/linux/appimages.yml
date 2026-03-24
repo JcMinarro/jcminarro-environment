@@ -2,12 +2,14 @@
 # Install AppImages
 
 - name: Ensure AppImage directory exists
+  become: true
   ansible.builtin.file:
     path: /opt/appimage
     state: directory
     mode: '0755'
 
 - name: Download AppImage files
+  become: true
   ansible.builtin.get_url:
     url: "{{ item.appimage_url }}"
     dest: "/opt/appimage/{{ item.appimage_url | basename }}"
@@ -15,6 +17,7 @@
   loop: "{{ appimages }}"
 
 - name: Create wrapper scripts for AppImages
+  become: true
   ansible.builtin.template:
     src: appimage-wrapper.j2
     dest: "/usr/local/bin/{{ item.appimage_alias }}"

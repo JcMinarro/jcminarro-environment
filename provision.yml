@@ -34,7 +34,6 @@
   hosts: localhost
   connection: local
   gather_facts: true
-  become: "{{ ansible_os_family in ['Debian', 'RedHat'] }}"
   roles:
     - role: jcminarro-environment
       tags:

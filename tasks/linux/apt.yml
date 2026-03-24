@@ -2,20 +2,24 @@
 # Setup APT repositories and GPG keys
 
 - name: Create keyrings directory
+  become: true
   ansible.builtin.file:
     path: /etc/apt/keyrings
     state: directory
     mode: '0755'
 
 - name: Install GPG keys from URLs
-  ansible.builtin.apt_key:
-    url: "{{ item.key_url }}"
-    keyring: "/etc/apt/keyrings/{{ item.key_filename }}.gpg"
-    state: present
+  become: true
+  ansible.builtin.shell: |
+    curl -fsSL "{{ item.key_url }}" -o "/etc/apt/keyrings/{{ item.key_filename }}.gpg"
+    chmod 0644 "/etc/apt/keyrings/{{ item.key_filename }}.gpg"
+  args:
+    creates: "/etc/apt/keyrings/{{ item.key_filename }}.gpg"
   loop: "{{ apt_repositories }}"
   when: item.key_url is defined
 
 - name: Add APT repositories
+  become: true
   ansible.builtin.apt_repository:
     repo: "{{ item.repo }}"
     filename: "{{ item.filename }}"
@@ -24,6 +28,7 @@
   loop: "{{ apt_repositories }}"
 
 - name: Update APT cache
+  become: true
   ansible.builtin.apt:
     update_cache: true
     cache_valid_time: 3600

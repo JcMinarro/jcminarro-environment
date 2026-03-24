@@ -26,6 +26,7 @@ install_sdkman: true
 configure_dotfiles: false
 install_opencode: true
 install_openspec: true
+apply_macos_tweaks: false
 
 # ============================================
 # GIT CONFIGURATION
@@ -80,10 +81,245 @@ ssh_default_identity_files:
   - ~/.ssh/id_rsa
 
 # ============================================
-# APP VERSIONS FOR LINUX
+# APT REPOSITORIES (Linux)
+# ============================================
+
+apt_repositories:
+  - repo: "deb [signed-by=/etc/apt/keyrings/sublimehq-pub.gpg] https://download.sublimetext.com/ apt/stable/"
+    filename: sublime
+    key_url: "https://download.sublimetext.com/sublimehq-pub.gpg"
+    key_filename: sublimehq-pub
+  - repo: "deb [signed-by=/etc/apt/keyrings/tailscale.gpg] https://pkgs.tailscale.com/stable/ubuntu {{ ansible_distribution_release }} main"
+    filename: tailscale
+    key_url: "https://pkgs.tailscale.com/stable/ubuntu/jammy.noarmor.gpg"
+    key_filename: tailscale
+
+# ============================================
+# SYSTEM PACKAGES (Linux - APT)
+# ============================================
+
+system_packages:
+  # Development Tools
+  - vim
+  - git
+  - jq
+  - colordiff
+  # Editors
+  - sublime-text
+  # System Utilities
+  - btop
+  - htop
+  - iperf3
+  - nmap
+  - zip
+  - unzip
+  - xz-utils
+  - aptitude
+  - libfuse2t64
+  - wireguard
+  - sshpass
+  # Terminal
+  - guake
+  # Security
+  - 1password
+  # Multimedia
+  - gimp
+  - peek
+  - vlc
+  # Network Tools
+  - tailscale
+  - traceroute
+  # Screenshot Tools
+  - flameshot
+  # Docker dependencies
+  - ca-certificates
+  - curl
+  - gnupg
+
+# ============================================
+# DOCKER (Linux)
+# ============================================
+
+docker_packages:
+  - docker-ce
+  - docker-ce-cli
+  - containerd.io
+  - docker-buildx-plugin
+  - docker-compose-plugin
+
+docker_keyrings_dir: /etc/apt/keyrings
+docker_gpg_key_url: https://download.docker.com/linux/ubuntu/gpg
+docker_repo: "deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
+
+# ============================================
+# APPIMAGES (Linux)
 # ============================================
 
 appimage_versions:
   nextcloud: "4.0.7"
   obsidian: "1.10.3"
   rquickshare: "0.11.5"
+
+appimages:
+  - appimage_url: "https://github.com/nextcloud-releases/desktop/releases/download/v{{ appimage_versions.nextcloud }}/Nextcloud-{{ appimage_versions.nextcloud }}-x86_64.AppImage"
+    appimage_alias: nextcloud
+  - appimage_url: "https://github.com/obsidianmd/obsidian-releases/releases/download/v{{ appimage_versions.obsidian }}/Obsidian-{{ appimage_versions.obsidian }}.AppImage"
+    appimage_alias: obsidian
+    appimage_flags: "--no-sandbox"
+  - appimage_url: "https://github.com/Martichou/rquickshare/releases/download/v{{ appimage_versions.rquickshare }}/r-quick-share-main_v{{ appimage_versions.rquickshare }}_glibc-2.39_amd64.AppImage"
+    appimage_alias: rquickshare
+
+# ============================================
+# SNAP PACKAGES (Linux)
+# ============================================
+
+snap_packages:
+  - slack
+  - telegram-desktop
+  - zoom-client
+  - discord
+
+# ============================================
+# ANKI (Linux)
+# ============================================
+
+anki_package: "anki-{{ anki_version }}-linux-qt6"
+anki_url: "https://github.com/ankitects/anki/releases/download/{{ anki_version }}/{{ anki_package }}.tar.zst"
+anki_dependencies:
+  - zstd
+  - libxkbcommon-x11-0
+  - libxcb-xinerama0
+  - libqt6core6
+  - libqt6gui6
+  - libqt6network6
+  - libqt6webengine6
+  - libqt6webchannel6
+  - libqt6positioning6
+  - python3-pyaudio
+  - python3-matplotlib
+  - python3-requests
+  - python3-send2trash
+  - python3-beautifulsoup4
+  - python3-flask-cors
+  - python3-jsonschema
+  - python3-protobuf
+  - python3-pyqt6
+  - python3-pyqt6.webengine
+  - python3-pysocks
+
+# ============================================
+# HOMEBREW (macOS)
+# ============================================
+
+homebrew_prefix: "/opt/homebrew"
+homebrew_bin: "{{ homebrew_prefix }}/bin"
+
+homebrew_taps: []
+
+brew_formulas:
+  # Development Tools
+  - git
+  - vim
+  - jq
+  - colordiff
+  - tree
+  - wget
+  - curl
+  # System Utilities
+  - htop
+  - btop
+  - iperf3
+  - nmap
+  - p7zip
+  - xz
+  - sshpass
+  # Network Tools
+  - mtr
+  - tailscale
+  # Terminal
+  - zsh
+  - zsh-completions
+  # Multimedia (CLI)
+  - ffmpeg
+  - imagemagick
+  # Others
+  - openssl
+  - readline
+  - sqlite3
+
+brew_casks:
+  # Browsers
+  - google-chrome
+  # Development
+  - visual-studio-code
+  - sublime-text
+  - docker
+  - iterm2
+  # Communication
+  - slack
+  - telegram
+  - zoom
+  - discord
+  # Productivity
+  - obsidian
+  - 1password
+  - nextcloud
+  # Multimedia
+  - vlc
+  - gimp
+  # Tools
+  - flameshot
+  - anki
+  - tailscale
+  # Replacement for peek (GIF recording)
+  - licecap
+
+# ============================================
+# DOCKER DESKTOP (macOS)
+# ============================================
+
+docker_desktop_settings:
+  resources:
+    cpus: 4
+    memory_mb: 8192
+    disk_size_gb: 64
+  features:
+    rosetta_emulation: true
+    kubernetes: false
+  network:
+    http_proxy: ""
+
+# ============================================
+# ANKI (macOS)
+# ============================================
+
+anki_macos_version: "{{ anki_version }}"
+anki_macos_package: "anki-{{ anki_macos_version }}-mac-apple-qt6"
+anki_macos_url: "https://github.com/ankitects/anki/releases/download/{{ anki_macos_version }}/{{ anki_macos_package }}.dmg"
+anki_macos_install_method: "cask"
+
+# ============================================
+# TERMINAL (macOS)
+# ============================================
+
+default_shell: "zsh"
+terminal_app: "iterm2"
+
+# ============================================
+# SYSTEM TWEAKS (macOS)
+# ============================================
+
+macos_system_tweaks:
+  # Finder
+  show_hidden_files: true
+  show_path_bar: true
+  show_status_bar: true
+  # Dock
+  autohide: true
+  minimize_to_application: true
+  # Keyboard
+  key_repeat: 2
+  initial_key_repeat: 15
+  # Trackpad
+  tap_to_click: true
+  scroll_direction: natural

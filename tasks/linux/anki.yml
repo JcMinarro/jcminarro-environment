@@ -2,33 +2,42 @@
 # Install Anki
 
 - name: Install Anki dependencies
+  become: true
   ansible.builtin.apt:
     name: "{{ anki_dependencies }}"
     state: present
 
 - name: Ensure Anki installation directory exists
+  become: true
   ansible.builtin.file:
     path: "/opt/anki-{{ anki_version }}"
     state: directory
     mode: '0755'
 
+- name: Check if Anki is already installed
+  ansible.builtin.stat:
+    path: "/opt/anki-{{ anki_version }}/{{ anki_package }}/anki"
+  register: anki_binary
+
 - name: Download and extract Anki
+  become: true
   ansible.builtin.unarchive:
-    src: "{{ anki_linux_url }}"
+    src: "{{ anki_url }}"
     dest: "/opt/anki-{{ anki_version }}"
     remote_src: true
     mode: '0755'
-  args:
-    creates: "/opt/anki-{{ anki_version }}/{{ anki_linux_package }}"
+  when: not anki_binary.stat.exists
 
 - name: Create Anki symbolic link
+  become: true
   ansible.builtin.file:
-    src: "/opt/anki-{{ anki_version }}/{{ anki_linux_package }}/anki"
+    src: "/opt/anki-{{ anki_version }}/{{ anki_package }}/anki"
     dest: "/usr/local/bin/anki"
     state: link
     force: true
 
 - name: Create Anki directories for assets
+  become: true
   ansible.builtin.file:
     path: "{{ item }}"
     state: directory
@@ -39,8 +48,9 @@
     - /usr/share/man/man1
 
 - name: Copy Anki assets
+  become: true
   ansible.builtin.copy:
-    src: "/opt/anki-{{ anki_version }}/{{ anki_linux_package }}/{{ item.src }}"
+    src: "/opt/anki-{{ anki_version }}/{{ anki_package }}/{{ item.src }}"
     dest: "{{ item.dest }}"
     mode: '0644'
     remote_src: true
@@ -50,20 +60,36 @@
     - { src: "anki.desktop", dest: "/usr/share/applications/anki.desktop" }
 
 - name: Install Anki MIME types
+  become: true
   ansible.builtin.copy:
-    src: "/opt/anki-{{ anki_version }}/{{ anki_linux_package }}/anki.xml"
+    src: "/opt/anki-{{ anki_version }}/{{ anki_package }}/anki.xml"
     dest: "/usr/share/mime/packages/anki.xml"
     mode: '0644'
     remote_src: true
 
+- name: Check MIME database timestamp
+  ansible.builtin.stat:
+    path: /usr/share/mime/packages/anki.xml
+  register: mime_file
+
 - name: Update MIME database
+  become: true
   ansible.builtin.command: update-mime-database /usr/share/mime
+  when: not mime_file.stat.exists
   changed_when: true
 
-- name: Set MIME type defaults
-  ansible.builtin.command: xdg-mime default anki.desktop {{ item }}
+- name: Check current MIME defaults
+  ansible.builtin.command: xdg-mime query default {{ item }}
+  register: mime_defaults
+  changed_when: false
   loop:
-    - application/x-colpkg
-    - application/x-apkg
-    - application/x-ankiaddon
+    - "application/x-colpkg"
+    - "application/x-apkg"
+    - "application/x-ankiaddon"
+
+- name: Set MIME type defaults
+  become: true
+  ansible.builtin.command: "xdg-mime default anki.desktop {{ item.item }}"
+  when: "'anki.desktop' not in item.stdout"
+  loop: "{{ mime_defaults.results }}"
   changed_when: true

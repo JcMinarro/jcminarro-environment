@@ -9,4 +9,4 @@
   ansible.builtin.homebrew:
     name: "{{ item }}"
     state: present
-  loop: "{{ homebrew_formulas }}"
+  loop: "{{ brew_formulas }}"

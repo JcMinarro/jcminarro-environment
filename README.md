@@ -13,17 +13,15 @@ Feel free to reference or re-use (at your own risk).
 
 ## Installation
 
-Run the playbook:
-
 ```bash
 ansible-playbook -K provision.yml
 ```
 
-The `-K` flag prompts for sudo password.
+The `-K` flag prompts for sudo password (needed for Linux package installation).
 
 ## What Gets Installed
 
-The role automatically detects your OS and installs appropriate packages:
+The role automatically detects your OS and installs appropriate packages.
 
 ### Common (Both Linux & macOS)
 
@@ -44,64 +42,68 @@ The role automatically detects your OS and installs appropriate packages:
 **System Packages:**
 - APT repositories: Sublime Text, Tailscale, Docker
 - System utilities: guake, wireguard, flameshot, peek, VLC, GIMP
-- Screenshot/recording tools
 
 **Applications:**
-- Sublime Text
-- 1Password
+- Sublime Text, 1Password
 - AppImages: Nextcloud, Obsidian, rquickshare
 - Snap packages: Slack, Telegram, Zoom, Discord
 - Anki (via tarball)
 
 **Development:**
-- Chrome & VSCode (via darkwizard242 roles)
+- Chrome & VSCode (via darkwizard242 Galaxy roles)
 
-### macOS Only (Apple Silicon)
+### macOS Only
 
 **Homebrew Packages:**
 - Homebrew itself (auto-installed)
 - Formulas: All common CLI tools
 - Casks: Chrome, VSCode, Docker Desktop, iTerm2
-- GUI Apps: Slack, Telegram, Zoom, Discord, Obsidian, 1Password
-- Multimedia: VLC, GIMP
+- GUI Apps: Slack, Telegram, Zoom, Discord, Obsidian, 1Password, Nextcloud
+- Multimedia: VLC, GIMP, licecap
 - Development: Sublime Text, Anki
-- Screenshot: flameshot replacement
 
 **System Configuration:**
-- macOS-specific tweaks (optional, via `apply_macos_tweaks: true`)
+- macOS system tweaks (disabled by default, enable with `apply_macos_tweaks: true`)
 
 ## Configuration
 
-Variables are split by OS in `group_vars/`:
-
-```
-group_vars/
-├── all.yml       # Common variables (versions, etc.)
-├── linux.yml     # Linux-specific (packages, repos)
-└── macos.yml     # macOS-specific (brew formulas, casks)
-```
+All variables are defined in `defaults/main.yml` and can be overridden.
 
 ### Key Variables
 
 ```yaml
-# In group_vars/all.yml
+# Feature toggles
+configure_git: true
+configure_ssh: true
+install_nodejs: true
+install_sdkman: true
+install_opencode: true
+install_openspec: true
+apply_macos_tweaks: false  # macOS system preferences
+
+# Versions
 anki_version: "25.02.5"
 nodejs_version: "24.14.0"
+sdkman_default_java_version: "21.0.2-tem"
 
-# In group_vars/linux.yml
+# Git
+git_user_name: "Jc Miñarro"
+git_user_email: "josecarlos.minarro@gmail.com"
+
+# System packages (Linux)
 system_packages:
   - vim
   - git
   - htop
   # ...
 
-# In group_vars/macos.yml
+# Homebrew (macOS)
 brew_formulas:
   - git
   - vim
   - htop
   # ...
-  
+
 brew_casks:
   - google-chrome
   - visual-studio-code
@@ -118,19 +120,13 @@ ansible-playbook -K provision.yml
 
 ### Run only specific tags
 ```bash
-# Install only development tools
 ansible-playbook -K provision.yml --tags "development"
-
-# Install only Anki
 ansible-playbook -K provision.yml --tags "anki"
-
-# Install only communication apps
 ansible-playbook -K provision.yml --tags "communication"
 ```
 
-### Run only for specific OS (though it auto-detects)
+### Skip specific tags
 ```bash
-# This happens automatically, but you can skip tasks with --skip-tags
 ansible-playbook -K provision.yml --skip-tags "macos"
 ```
 
@@ -149,36 +145,60 @@ ansible-playbook -K provision.yml --skip-tags "macos"
 - `linux` - All Linux-specific tasks
 - `macos` - All macOS-specific tasks
 
+## Project Structure
+
+```
+jcminarro-environment/
+├── defaults/
+│   └── main.yml            # All default variables
+├── tasks/
+│   ├── main.yml            # Entry point (OS routing)
+│   ├── common.yml          # OS-agnostic tasks
+│   ├── git.yml, ssh.yml    # Configuration tasks
+│   ├── sdkman.yml          # SDKMAN installation
+│   ├── nodejs.yml          # Node.js via n
+│   ├── opencode.yml        # OpenCode installation
+│   ├── openspec.yml        # OpenSpec installation
+│   ├── dotfiles.yml        # Dotfiles (placeholder)
+│   ├── linux.yml           # Linux task dispatcher
+│   ├── linux/              # Linux-specific tasks
+│   ├── macos.yml           # macOS task dispatcher
+│   └── macos/              # macOS-specific tasks
+├── handlers/
+│   └── main.yml            # Service restart handlers
+├── templates/
+│   └── appimage-wrapper.j2 # AppImage launcher script
+├── requirements/
+│   ├── common.yml          # Shared Galaxy roles
+│   ├── linux.yml           # Linux Galaxy roles
+│   └── macos.yml           # macOS Galaxy roles (empty)
+├── provision.yml           # Main playbook
+└── AGENTS.md               # LLM/agent context
+```
+
 ## Notes
 
 ### Shell Configuration
 
-**Important:** This role does NOT manage your `.bashrc` or `.zshrc` files to avoid overwriting your manual changes. These files are managed manually by you.
-
-If you want automated dotfiles management, consider creating a separate dotfiles repository.
-
-### OpenCode
-
-OpenCode is installed as a standalone binary:
-- Location: `~/.opencode/bin/opencode`
-- Added to PATH automatically via `.bashrc` or `.zshrc` (if managed manually)
-
-### Node.js
-
-Node.js is managed via `n` (version manager):
-- Update to latest LTS: `n lts`
-- Install specific version: `n <version>`
-- List versions: `n ls`
+This role does NOT manage `.bashrc` or `.zshrc` directly. It only adds specific PATH entries (for n, SDKMAN, OpenCode) using `blockinfile`. Your other shell customizations are preserved.
 
 ### Docker
 
-After installation, you need to **log out and log back in** for the docker group membership to take effect.
+After installation, log out and back in for docker group membership to take effect.
+
+### macOS System Tweaks
+
+Disabled by default. To enable Finder/Dock/keyboard tweaks:
+
+```bash
+ansible-playbook -K provision.yml --tags "macos,system" -e apply_macos_tweaks=true
+```
 
 ## Testing
 
 Tested on:
-- ✅ Ubuntu 22.04/24.04 (x86_64)
-- ✅ macOS Sonoma/Sequoia (Apple Silicon M1/M2/M3)
+- Ubuntu 22.04/24.04 (x86_64)
+- macOS Sonoma/Sequoia (Apple Silicon M1/M2/M3)
 
 ## License
 
@@ -187,7 +207,3 @@ BSD
 ## Author
 
 [Jc Miñarro](https://github.com/JcMinarro)
-
----
-
-**Note:** This is a personal configuration role. Feel free to fork and adapt to your needs!
