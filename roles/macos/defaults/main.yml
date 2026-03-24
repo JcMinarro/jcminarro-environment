@@ -15,42 +15,10 @@ homebrew_taps: []
 # ============================================
 # HOMEBREW FORMULAS (CLI tools)
 # ============================================
-
-brew_formulas:
-  # Development Tools
-  - git
-  - vim
-  - jq
-  - colordiff
-  - tree
-  - wget
-  - curl
-  
-  # System Utilities
-  - htop
-  - btop
-  - iperf3
-  - nmap
-  - p7zip
-  - xz
-  - sshpass
-  
-  # Network Tools
-  - mtr
-  - tailscale
-  
-  # Terminal
-  - zsh
-  - zsh-completions
-  
-  # Multimedia (CLI)
-  - ffmpeg
-  - imagemagick
-  
-  # Others
-  - openssl
-  - readline
-  - sqlite3
+# NOTE: brew_formulas are defined in group_vars/macos.yml
+# This ensures they can be easily customized per environment
+# without modifying role defaults.
+brew_formulas: []
 
 # ============================================
 # HOMEBREW CASKS (GUI Applications)

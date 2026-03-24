@@ -1,0 +1,55 @@
+---
+# Linux role - Ubuntu/Debian specific tasks
+# This role contains all Linux-specific configuration
+
+- name: Include OS-specific variables
+  ansible.builtin.include_vars:
+    file: "{{ ansible_distribution }}.yml"
+  ignore_errors: true
+  tags:
+    - always
+
+- name: Setup APT repositories and keys
+  ansible.builtin.import_tasks: apt.yml
+  tags:
+    - linux
+    - apt
+    - repositories
+
+- name: Install system packages
+  ansible.builtin.import_tasks: packages.yml
+  tags:
+    - linux
+    - apt
+    - packages
+
+- name: Install AppImages
+  ansible.builtin.import_tasks: appimages.yml
+  tags:
+    - linux
+    - appimages
+
+- name: Install Snap packages
+  ansible.builtin.import_tasks: snaps.yml
+  tags:
+    - linux
+    - snaps
+    - communication
+
+- name: Install Docker
+  ansible.builtin.import_tasks: docker.yml
+  tags:
+    - linux
+    - docker
+
+- name: Install Anki
+  ansible.builtin.import_tasks: anki.yml
+  tags:
+    - linux
+    - anki
+
+- name: Install Galaxy roles
+  ansible.builtin.include_tasks: galaxy_roles.yml
+  tags:
+    - linux
+    - galaxy
