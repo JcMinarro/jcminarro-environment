@@ -1,9 +1,14 @@
 ---
 # Tasks file for jcminarro-environment
-# This is the main entry point that delegates to OS-specific roles
-# DO NOT add OS-specific tasks here - use the appropriate role instead:
-# - roles/common/    for OS-agnostic tasks
-# - roles/linux/     for Ubuntu/Debian specific tasks
-# - roles/macos/     for macOS specific tasks
+# Main entry point that delegates to OS-specific tasks
 
-# This file is intentionally minimal - all actual tasks are in the roles/ directory
+- name: Include common tasks
+  ansible.builtin.import_tasks: common.yml
+
+- name: Include Linux tasks
+  ansible.builtin.import_tasks: linux.yml
+  when: ansible_os_family in ["Debian", "RedHat"]
+
+- name: Include macOS tasks
+  ansible.builtin.import_tasks: macos.yml
+  when: ansible_os_family == "Darwin"

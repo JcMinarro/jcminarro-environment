@@ -1,0 +1,21 @@
+---
+# Install Docker Desktop for Mac
+
+- name: Check if Docker is already installed
+  ansible.builtin.stat:
+    path: /Applications/Docker.app
+  register: docker_app
+
+- name: Install Docker Desktop via Homebrew Cask
+  ansible.builtin.homebrew_cask:
+    name: docker
+    state: present
+  when: not docker_app.stat.exists
+
+- name: Wait for Docker to be ready
+  ansible.builtin.command: docker version
+  register: docker_version
+  until: docker_version.rc == 0
+  retries: 10
+  delay: 10
+  ignore_errors: true

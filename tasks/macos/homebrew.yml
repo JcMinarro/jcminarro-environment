@@ -1,0 +1,33 @@
+---
+# Install Homebrew package manager
+
+- name: Check if Homebrew is already installed
+  ansible.builtin.stat:
+    path: /opt/homebrew/bin/brew
+  register: homebrew_arm64
+
+- name: Check if Homebrew is installed (Intel)
+  ansible.builtin.stat:
+    path: /usr/local/bin/brew
+  register: homebrew_intel
+
+- name: Install Homebrew
+  ansible.builtin.shell: |
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  when: not homebrew_arm64.stat.exists and not homebrew_intel.stat.exists
+  environment:
+    NONINTERACTIVE: "1"
+
+- name: Add Homebrew to PATH (ARM64)
+  ansible.builtin.lineinfile:
+    path: "{{ home_directory }}/.zprofile"
+    line: 'eval "$(/opt/homebrew/bin/brew shellenv)"'
+    create: true
+  when: homebrew_arm64.stat.exists or (not homebrew_intel.stat.exists and ansible_architecture == "arm64")
+
+- name: Add Homebrew to PATH (Intel)
+  ansible.builtin.lineinfile:
+    path: "{{ home_directory }}/.zprofile"
+    line: 'eval "$(/usr/local/bin/brew shellenv)"'
+    create: true
+  when: homebrew_intel.stat.exists or (not homebrew_arm64.stat.exists and ansible_architecture != "arm64")

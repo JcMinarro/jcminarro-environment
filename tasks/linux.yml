@@ -1,0 +1,47 @@
+---
+# Linux-specific tasks - Ubuntu/Debian
+
+- name: Setup APT repositories and keys
+  ansible.builtin.import_tasks: linux/apt.yml
+  tags:
+    - linux
+    - apt
+    - repositories
+
+- name: Install system packages
+  ansible.builtin.import_tasks: linux/packages.yml
+  tags:
+    - linux
+    - apt
+    - packages
+
+- name: Install AppImages
+  ansible.builtin.import_tasks: linux/appimages.yml
+  tags:
+    - linux
+    - appimages
+
+- name: Install Snap packages
+  ansible.builtin.import_tasks: linux/snaps.yml
+  tags:
+    - linux
+    - snaps
+    - communication
+
+- name: Install Docker
+  ansible.builtin.import_tasks: linux/docker.yml
+  tags:
+    - linux
+    - docker
+
+- name: Install Anki
+  ansible.builtin.import_tasks: linux/anki.yml
+  tags:
+    - linux
+    - anki
+
+- name: Install Galaxy roles
+  ansible.builtin.include_tasks: linux/galaxy_roles.yml
+  tags:
+    - linux
+    - galaxy

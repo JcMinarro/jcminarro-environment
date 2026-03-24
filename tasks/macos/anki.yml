@@ -1,0 +1,13 @@
+---
+# Install Anki for macOS
+
+- name: Check if Anki is already installed
+  ansible.builtin.stat:
+    path: /Applications/Anki.app
+  register: anki_app
+
+- name: Install Anki via Homebrew Cask
+  ansible.builtin.homebrew_cask:
+    name: anki
+    state: present
+  when: not anki_app.stat.exists

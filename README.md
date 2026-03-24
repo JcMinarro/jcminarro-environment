@@ -1,147 +1,193 @@
 # jcminarro-environment
 
-Ansible role to manage my laptop setup. Feel free to reference or re-use (at your own risk).
+Ansible role to manage my laptop setup. Works on both **Linux (Ubuntu/Debian)** and **macOS**.
+
+Feel free to reference or re-use (at your own risk).
 
 ## Requirements
 
-This role requires Ansible 2.9 or higher and has been tested on Ubuntu.
-
-The following roles are used:
-- [gantsign.sdkman](https://galaxy.ansible.com/ui/standalone/roles/gantsign/sdkman/documentation/)
-- [darkwizard242.googlechrome](https://galaxy.ansible.com/ui/standalone/roles/darkwizard242/googlechrome/)
-- [darkwizard242.vscode](https://galaxy.ansible.com/ui/standalone/roles/darkwizard242/vscode/)
+- Ansible 2.9 or higher
+- Supported operating systems:
+  - **Linux**: Ubuntu/Debian (tested on Ubuntu 22.04+)
+  - **macOS**: Apple Silicon (M1/M2/M3) or Intel
 
 ## Installation
 
-Just run the playbook:
+Run the playbook:
+
 ```bash
 ansible-playbook -K provision.yml
 ```
 
-The required roles will be installed automatically during the playbook execution.
+The `-K` flag prompts for sudo password.
 
-## Role Variables
+## What Gets Installed
 
-Default variables are defined in `defaults/main.yml`:
+The role automatically detects your OS and installs appropriate packages:
 
-```yaml
-# Anki
-anki_version: "25.02"
-```
+### Common (Both Linux & macOS)
 
-You can override these variables by defining them in your playbook.
-
-## Features
-
-This role installs and configures:
-
-### Development Tools
-- Git
-- SDKMAN (for Java development)
-- Visual Studio Code (with darkwizard242.vscode)
-- Sublime Text
-- colordiff (Colored diff output)
-- Node.js LTS & npm (managed with n version manager)
+**Development Tools:**
+- Git with custom configuration
+- SDKMAN (Java/Kotlin/Gradle version manager)
+- Node.js LTS (via `n` version manager) + npm + pnpm
 - Docker & Docker Compose
 - OpenCode (AI coding agent)
+- OpenSpec (API specification tool)
 
-### System Utilities
-- htop, btop
-- vim
-- zip/unzip
-- xz-utils
-- nmap
-- jq
-- sshpass
-- Flameshot (Screenshot tool)
-- Obsidian
+**CLI Utilities:**
+- vim, jq, htop, btop, colordiff, tree
+- ssh tools, nmap, iperf3, mtr
 
-### Network Tools
-- Tailscale
-- iperf3
-- nmap
-- wireguard
-- traceroute
+### Linux Only (Ubuntu/Debian)
 
-### Applications
-- Google Chrome
-- Anki
+**System Packages:**
+- APT repositories: Sublime Text, Tailscale, Docker
+- System utilities: guake, wireguard, flameshot, peek, VLC, GIMP
+- Screenshot/recording tools
+
+**Applications:**
+- Sublime Text
 - 1Password
-- Nextcloud Desktop
-- SuperProductivity
+- AppImages: Nextcloud, Obsidian, rquickshare
+- Snap packages: Slack, Telegram, Zoom, Discord
+- Anki (via tarball)
 
-### Communication
-- Slack
-- Telegram
-- Zoom
-- Discord
+**Development:**
+- Chrome & VSCode (via darkwizard242 roles)
 
-### Multimedia
-- GIMP (GNU Image Manipulation Program)
-- Peek
-- VLC
+### macOS Only (Apple Silicon)
 
-## Usage Notes
+**Homebrew Packages:**
+- Homebrew itself (auto-installed)
+- Formulas: All common CLI tools
+- Casks: Chrome, VSCode, Docker Desktop, iTerm2
+- GUI Apps: Slack, Telegram, Zoom, Discord, Obsidian, 1Password
+- Multimedia: VLC, GIMP
+- Development: Sublime Text, Anki
+- Screenshot: flameshot replacement
 
-### OpenCode
-OpenCode is an AI coding agent installed as a standalone binary. After installation:
-- The binary is installed in `~/.opencode/bin/opencode`
-- Your PATH is automatically configured in `.bashrc`
-- Run `opencode` in any project directory to start
-- Use `/connect` to configure your LLM provider
-- Visit [opencode.ai](https://opencode.ai) for more documentation
+**System Configuration:**
+- macOS-specific tweaks (optional, via `apply_macos_tweaks: true`)
 
-### Node.js Management
-Node.js is installed using `n` version manager. You can:
-- Update to latest LTS: `n lts`
-- Install specific version: `n <version>`
-- List installed versions: `n ls`
+## Configuration
 
-### Docker
-The installation:
-- Installs Docker CE and Docker Compose
-- Adds your user to the docker group (requires logout/login to take effect)
-- Includes buildx and compose plugins
+Variables are split by OS in `group_vars/`:
 
-## Tags
+```
+group_vars/
+├── all.yml       # Common variables (versions, etc.)
+├── linux.yml     # Linux-specific (packages, repos)
+└── macos.yml     # macOS-specific (brew formulas, casks)
+```
 
-You can use tags to run specific parts of the role:
+### Key Variables
 
+```yaml
+# In group_vars/all.yml
+anki_version: "25.02.5"
+nodejs_version: "24.14.0"
+
+# In group_vars/linux.yml
+system_packages:
+  - vim
+  - git
+  - htop
+  # ...
+
+# In group_vars/macos.yml
+brew_formulas:
+  - git
+  - vim
+  - htop
+  # ...
+  
+brew_casks:
+  - google-chrome
+  - visual-studio-code
+  - docker
+  # ...
+```
+
+## Usage Examples
+
+### Run everything
 ```bash
+ansible-playbook -K provision.yml
+```
+
+### Run only specific tags
+```bash
+# Install only development tools
+ansible-playbook -K provision.yml --tags "development"
+
 # Install only Anki
 ansible-playbook -K provision.yml --tags "anki"
 
-# Install development tools
-ansible-playbook -K provision.yml --tags "development"
-
-# Install OpenCode only
-ansible-playbook -K provision.yml --tags "opencode"
-
-# Install communication apps
+# Install only communication apps
 ansible-playbook -K provision.yml --tags "communication"
 ```
 
-Available tags:
-- `anki`
-- `opencode`
-- `development`
-- `communication`
-- `browsers`
-- `system`
-- `packages`
-- `tarballs`
-- `appimages`
-- `snaps`
+### Run only for specific OS (though it auto-detects)
+```bash
+# This happens automatically, but you can skip tasks with --skip-tags
+ansible-playbook -K provision.yml --skip-tags "macos"
+```
 
-## Dependencies
+## Tags Available
 
-Dependencies are managed through `requirements.yml`. Make sure to install them before running the playbook.
+- `anki` - Anki flashcards
+- `opencode` - OpenCode AI agent
+- `openspec` - OpenSpec tool
+- `development` - SDKMAN, Node.js, Docker
+- `communication` - Slack, Telegram, Zoom, Discord
+- `browsers` - Chrome
+- `system` - System utilities
+- `packages` - APT/brew packages
+- `appimages` - AppImage applications (Linux)
+- `snaps` - Snap packages (Linux)
+- `linux` - All Linux-specific tasks
+- `macos` - All macOS-specific tasks
+
+## Notes
+
+### Shell Configuration
+
+**Important:** This role does NOT manage your `.bashrc` or `.zshrc` files to avoid overwriting your manual changes. These files are managed manually by you.
+
+If you want automated dotfiles management, consider creating a separate dotfiles repository.
+
+### OpenCode
+
+OpenCode is installed as a standalone binary:
+- Location: `~/.opencode/bin/opencode`
+- Added to PATH automatically via `.bashrc` or `.zshrc` (if managed manually)
+
+### Node.js
+
+Node.js is managed via `n` (version manager):
+- Update to latest LTS: `n lts`
+- Install specific version: `n <version>`
+- List versions: `n ls`
+
+### Docker
+
+After installation, you need to **log out and log back in** for the docker group membership to take effect.
+
+## Testing
+
+Tested on:
+- ✅ Ubuntu 22.04/24.04 (x86_64)
+- ✅ macOS Sonoma/Sequoia (Apple Silicon M1/M2/M3)
 
 ## License
 
 BSD
 
-## Author Information
+## Author
 
 [Jc Miñarro](https://github.com/JcMinarro)
 
+---
+
+**Note:** This is a personal configuration role. Feel free to fork and adapt to your needs!

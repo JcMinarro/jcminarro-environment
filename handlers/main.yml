@@ -1,2 +1,15 @@
 ---
-# handlers file for jcminarro-environment
+# Handlers for jcminarro-environment
+
+# Linux handlers
+- name: Restart Docker
+  ansible.builtin.service:
+    name: docker
+    state: restarted
+    enabled: true
+  become: true
+
+# macOS handlers
+- name: Restart Finder
+  ansible.builtin.command: killall Finder
+  ignore_errors: true

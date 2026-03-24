@@ -1,0 +1,40 @@
+---
+# macOS-specific tasks
+
+- name: Install Homebrew
+  ansible.builtin.import_tasks: macos/homebrew.yml
+  tags:
+    - macos
+    - homebrew
+
+- name: Install Homebrew formulas
+  ansible.builtin.import_tasks: macos/formulas.yml
+  tags:
+    - macos
+    - homebrew
+    - formulas
+
+- name: Install Homebrew casks
+  ansible.builtin.import_tasks: macos/casks.yml
+  tags:
+    - macos
+    - homebrew
+    - casks
+
+- name: Install Docker
+  ansible.builtin.import_tasks: macos/docker.yml
+  tags:
+    - macos
+    - docker
+
+- name: Install Anki
+  ansible.builtin.import_tasks: macos/anki.yml
+  tags:
+    - macos
+    - anki
+
+- name: Apply system tweaks
+  ansible.builtin.import_tasks: macos/system_tweaks.yml
+  tags:
+    - macos
+    - system

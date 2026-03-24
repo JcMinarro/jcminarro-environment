@@ -1,11 +1,89 @@
 ---
-# defaults file for jcminarro-environment
+# Default variables for jcminarro-environment
 
-# Anki
-anki_version: "25.02"
-anki_package: "anki-{{ anki_version }}-linux-qt6"
-anki_url: "https://github.com/ankitects/anki/releases/download/{{ anki_version }}/{{ anki_package }}.tar.zst"
+# ============================================
+# USER CONFIGURATION
+# ============================================
 
-# Node.js
-nodejs_version: "20.x"  # LTS version
+current_user: "{{ lookup('env', 'USER') }}"
+home_directory: "{{ lookup('env', 'HOME') }}"
 
+# ============================================
+# PATHS
+# ============================================
+
+ssh_directory: "{{ home_directory }}/.ssh"
+ssh_config_file: "{{ ssh_directory }}/config"
+
+# ============================================
+# FEATURE TOGGLES
+# ============================================
+
+configure_git: true
+configure_ssh: true
+install_nodejs: true
+install_sdkman: true
+configure_dotfiles: false
+install_opencode: true
+install_openspec: true
+
+# ============================================
+# GIT CONFIGURATION
+# ============================================
+
+git_user_name: "Jc Miñarro"
+git_user_email: "josecarlos.minarro@gmail.com"
+git_core_editor: "vim"
+
+# ============================================
+# SDKMAN CONFIGURATION
+# ============================================
+
+sdkman_users:
+  - "{{ current_user }}"
+
+sdkman_default_java_version: "21.0.2-tem"
+sdkman_additional_java_versions:
+  - "17.0.9-tem"
+
+# ============================================
+# NODE.JS CONFIGURATION
+# ============================================
+
+nodejs_version: "24.14.0"
+n_version: "lts"
+
+# ============================================
+# ANKI VERSION
+# ============================================
+
+anki_version: "25.02.5"
+
+# ============================================
+# DIRECTORIES
+# ============================================
+
+common_directories:
+  - "{{ home_directory }}/projects"
+  - "{{ home_directory }}/bin"
+  - "{{ home_directory }}/.config"
+  - "{{ home_directory }}/.local/bin"
+
+# ============================================
+# SSH CONFIGURATION
+# ============================================
+
+ssh_add_keys_to_agent: true
+ssh_use_keychain: true
+ssh_default_identity_files:
+  - ~/.ssh/id_ed25519
+  - ~/.ssh/id_rsa
+
+# ============================================
+# APP VERSIONS FOR LINUX
+# ============================================
+
+appimage_versions:
+  nextcloud: "4.0.7"
+  obsidian: "1.10.3"
+  rquickshare: "0.11.5"

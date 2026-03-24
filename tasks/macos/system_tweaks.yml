@@ -1,0 +1,47 @@
+---
+# macOS system tweaks and preferences
+
+- name: Show hidden files in Finder
+  ansible.builtin.osx_defaults:
+    domain: com.apple.finder
+    key: AppleShowAllFiles
+    type: bool
+    value: true
+  notify: Restart Finder
+
+- name: Show path bar in Finder
+  ansible.builtin.osx_defaults:
+    domain: com.apple.finder
+    key: ShowPathbar
+    type: bool
+    value: true
+  notify: Restart Finder
+
+- name: Show status bar in Finder
+  ansible.builtin.osx_defaults:
+    domain: com.apple.finder
+    key: ShowStatusBar
+    type: bool
+    value: true
+  notify: Restart Finder
+
+- name: Disable automatic spelling correction
+  ansible.builtin.osx_defaults:
+    domain: NSGlobalDomain
+    key: NSAutomaticSpellingCorrectionEnabled
+    type: bool
+    value: false
+
+- name: Set fast key repeat rate
+  ansible.builtin.osx_defaults:
+    domain: NSGlobalDomain
+    key: KeyRepeat
+    type: int
+    value: 2
+
+- name: Set short initial key repeat delay
+  ansible.builtin.osx_defaults:
+    domain: NSGlobalDomain
+    key: InitialKeyRepeat
+    type: int
+    value: 15

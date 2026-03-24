@@ -1,0 +1,69 @@
+---
+# Install Anki
+
+- name: Install Anki dependencies
+  ansible.builtin.apt:
+    name: "{{ anki_dependencies }}"
+    state: present
+
+- name: Ensure Anki installation directory exists
+  ansible.builtin.file:
+    path: "/opt/anki-{{ anki_version }}"
+    state: directory
+    mode: '0755'
+
+- name: Download and extract Anki
+  ansible.builtin.unarchive:
+    src: "{{ anki_linux_url }}"
+    dest: "/opt/anki-{{ anki_version }}"
+    remote_src: true
+    mode: '0755'
+  args:
+    creates: "/opt/anki-{{ anki_version }}/{{ anki_linux_package }}"
+
+- name: Create Anki symbolic link
+  ansible.builtin.file:
+    src: "/opt/anki-{{ anki_version }}/{{ anki_linux_package }}/anki"
+    dest: "/usr/local/bin/anki"
+    state: link
+    force: true
+
+- name: Create Anki directories for assets
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+  loop:
+    - /usr/share/pixmaps
+    - /usr/share/applications
+    - /usr/share/man/man1
+
+- name: Copy Anki assets
+  ansible.builtin.copy:
+    src: "/opt/anki-{{ anki_version }}/{{ anki_linux_package }}/{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: '0644'
+    remote_src: true
+  loop:
+    - { src: "anki.png", dest: "/usr/share/pixmaps/anki.png" }
+    - { src: "anki.1", dest: "/usr/share/man/man1/anki.1" }
+    - { src: "anki.desktop", dest: "/usr/share/applications/anki.desktop" }
+
+- name: Install Anki MIME types
+  ansible.builtin.copy:
+    src: "/opt/anki-{{ anki_version }}/{{ anki_linux_package }}/anki.xml"
+    dest: "/usr/share/mime/packages/anki.xml"
+    mode: '0644'
+    remote_src: true
+
+- name: Update MIME database
+  ansible.builtin.command: update-mime-database /usr/share/mime
+  changed_when: true
+
+- name: Set MIME type defaults
+  ansible.builtin.command: xdg-mime default anki.desktop {{ item }}
+  loop:
+    - application/x-colpkg
+    - application/x-apkg
+    - application/x-ankiaddon
+  changed_when: true

@@ -1,0 +1,8 @@
+---
+# Install Homebrew casks
+
+- name: Install Homebrew casks
+  ansible.builtin.homebrew_cask:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ homebrew_casks }}"

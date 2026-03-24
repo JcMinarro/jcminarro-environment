@@ -1,0 +1,52 @@
+---
+# Install Node.js using n (Node version manager)
+# This works the same on Linux and macOS
+
+- name: Check if n is installed
+  ansible.builtin.stat:
+    path: /usr/local/bin/n
+  register: n_installed
+
+- name: Install build dependencies (Linux only)
+  ansible.builtin.package:
+    name:
+      - build-essential
+    state: present
+  when: ansible_os_family in ["Debian", "RedHat"]
+  become: true
+
+- name: Download n installer
+  ansible.builtin.get_url:
+    url: https://raw.githubusercontent.com/tj/n/master/bin/n
+    dest: /tmp/n
+    mode: '0755'
+
+- name: Install n
+  ansible.builtin.command: /tmp/n lts
+  args:
+    creates: /usr/local/bin/n
+  become: true
+  when: not n_installed.stat.exists
+
+- name: Install latest npm
+  ansible.builtin.command: npm install -g npm@latest
+  changed_when: false
+  become: true
+
+- name: Install pnpm
+  ansible.builtin.command: npm install -g pnpm
+  args:
+    creates: /usr/local/bin/pnpm
+  become: true
+
+- name: Ensure n is in PATH (bash)
+  ansible.builtin.lineinfile:
+    path: "{{ home_directory }}/.bashrc"
+    line: 'export N_PREFIX="$HOME/n" && export PATH="$N_PREFIX/bin:$PATH"'
+    state: present
+
+- name: Ensure n is in PATH (zsh)
+  ansible.builtin.lineinfile:
+    path: "{{ home_directory }}/.zshrc"
+    line: 'export N_PREFIX="$HOME/n" && export PATH="$N_PREFIX/bin:$PATH"'
+    state: present

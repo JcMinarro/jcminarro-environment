@@ -1,12 +1,12 @@
 ---
 # Main playbook to configure development environment
-# This playbook detects the OS and applies the appropriate configuration
+# This playbook uses a single role with OS detection
 
 # =============================================================================
-# PHASE 1: Install Galaxy roles (OS-specific)
+# PHASE 1: Install Galaxy roles
 # =============================================================================
 
-- name: Install Galaxy roles for Linux
+- name: Install Galaxy roles
   hosts: localhost
   connection: local
   gather_facts: true
@@ -27,63 +27,26 @@
     - requirements
 
 # =============================================================================
-# PHASE 2: Apply common configuration (OS-agnostic)
+# PHASE 2: Apply configuration using single role
 # =============================================================================
 
-- name: Apply common configuration
+- name: Apply environment configuration
   hosts: localhost
   connection: local
   gather_facts: true
+  become: "{{ ansible_os_family in ['Debian', 'RedHat'] }}"
   roles:
-    - role: common
+    - role: jcminarro-environment
       tags:
-        - common
         - always
+        - environment
 
   tags:
     - always
-    - common
+    - environment
 
 # =============================================================================
-# PHASE 3: Apply OS-specific configuration
-# =============================================================================
-
-- name: Apply Linux-specific configuration
-  hosts: localhost
-  connection: local
-  gather_facts: true
-  become: true
-  roles:
-    - role: linux
-      when: ansible_os_family in ["Debian", "RedHat"]
-      tags:
-        - linux
-        - ubuntu
-        - debian
-
-  tags:
-    - linux
-    - ubuntu
-
-- name: Apply macOS-specific configuration
-  hosts: localhost
-  connection: local
-  gather_facts: true
-  become: false
-  roles:
-    - role: macos
-      when: ansible_os_family == "Darwin"
-      tags:
-        - macos
-        - darwin
-        - apple
-
-  tags:
-    - macos
-    - darwin
-
-# =============================================================================
-# PHASE 4: Post-configuration verification
+# PHASE 3: Post-configuration verification
 # =============================================================================
 
 - name: Verify installation
@@ -101,20 +64,7 @@
           Operating System: {{ ansible_distribution }} {{ ansible_distribution_version }}
           Architecture: {{ ansible_architecture }}
           
-          Common tools installed:
-          - Git, Vim, SDKMan, Node.js (n), OpenCode
-          
-          {% if ansible_os_family in ["Debian", "RedHat"] %}
-          Linux-specific:
-          - Apt packages, Docker Engine, Snap packages
-          - AppImages
-          {% endif %}
-          
-          {% if ansible_os_family == "Darwin" %}
-          macOS-specific:
-          - Homebrew formulas and casks
-          - Docker Desktop
-          {% endif %}
+          Configuration applied successfully!
           
           ============================================
           Next steps:
