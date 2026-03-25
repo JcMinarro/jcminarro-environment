@@ -157,7 +157,7 @@ docker_repo: "deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.gpg] https://do
 
 appimage_versions:
   nextcloud: "4.0.7"
-  obsidian: "1.10.3"
+  obsidian: "1.12.7"
   rquickshare: "0.11.5"
 
 appimages:
