@@ -33,6 +33,12 @@
     - macos
     - anki
 
+- name: Install ElegooSlicer
+  ansible.builtin.import_tasks: macos/elegooslicer.yml
+  tags:
+    - macos
+    - elegooslicer
+
 - name: Apply system tweaks
   ansible.builtin.import_tasks: macos/system_tweaks.yml
   tags:

@@ -159,6 +159,7 @@ appimage_versions:
   nextcloud: "4.0.7"
   obsidian: "1.12.7"
   rquickshare: "0.11.5"
+  elegooslicer: "1.3.0.11"
 
 appimages:
   - appimage_url: "https://github.com/nextcloud-releases/desktop/releases/download/v{{ appimage_versions.nextcloud }}/Nextcloud-{{ appimage_versions.nextcloud }}-x86_64.AppImage"
@@ -168,6 +169,8 @@ appimages:
     appimage_flags: "--no-sandbox"
   - appimage_url: "https://github.com/Martichou/rquickshare/releases/download/v{{ appimage_versions.rquickshare }}/r-quick-share-main_v{{ appimage_versions.rquickshare }}_glibc-2.39_amd64.AppImage"
     appimage_alias: rquickshare
+  - appimage_url: "https://github.com/ELEGOO-3D/ElegooSlicer/releases/download/v{{ appimage_versions.elegooslicer }}/ElegooSlicer_Linux_Ubuntu2404_V{{ appimage_versions.elegooslicer }}.AppImage"
+    appimage_alias: elegooslicer
 
 # ============================================
 # SNAP PACKAGES (Linux)
@@ -206,6 +209,12 @@ anki_dependencies:
   - python3-pyqt6
   - python3-pyqt6.webengine
   - python3-pysocks
+
+# ============================================
+# ELEGOOSLICER (macOS)
+# ============================================
+
+elegooslicer_macos_url: "https://github.com/ELEGOO-3D/ElegooSlicer/releases/download/v{{ appimage_versions.elegooslicer }}/ElegooSlicer_Mac_{{ ansible_architecture | replace('x86_64', 'x86_64') | replace('aarch64', 'arm64') }}_V{{ appimage_versions.elegooslicer }}.dmg"
 
 # ============================================
 # HOMEBREW (macOS)

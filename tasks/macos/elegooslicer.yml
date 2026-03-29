@@ -1,0 +1,45 @@
+---
+# Install ElegooSlicer for macOS via DMG
+
+- name: Check if ElegooSlicer is already installed
+  ansible.builtin.stat:
+    path: /Applications/ElegooSlicer.app
+  register: elegooslicer_app
+
+- name: Install ElegooSlicer
+  when: not elegooslicer_app.stat.exists
+  block:
+    - name: Create temp directory for DMG
+      ansible.builtin.tempfile:
+        state: directory
+        suffix: .elegooslicer
+      register: elegooslicer_tmp
+
+    - name: Download ElegooSlicer DMG
+      ansible.builtin.get_url:
+        url: "{{ elegooslicer_macos_url }}"
+        dest: "{{ elegooslicer_tmp.path }}/ElegooSlicer.dmg"
+
+    - name: Mount ElegooSlicer DMG
+      ansible.builtin.command:
+        cmd: hdiutil attach "{{ elegooslicer_tmp.path }}/ElegooSlicer.dmg" -nobrowse -readonly
+      register: elegooslicer_mount
+      changed_when: true
+
+    - name: Find mounted volume
+      ansible.builtin.set_fact:
+        elegooslicer_volume: "{{ elegooslicer_mount.stdout_lines | last | regex_search('(/Volumes/[^\\s]+)') }}"
+
+    - name: Copy ElegooSlicer to Applications
+      ansible.builtin.command:
+        cmd: cp -R "{{ elegooslicer_volume }}/ElegooSlicer.app" /Applications/
+
+    - name: Unmount ElegooSlicer DMG
+      ansible.builtin.command:
+        cmd: hdiutil detach "{{ elegooslicer_volume }}"
+      changed_when: true
+
+    - name: Clean up temp directory
+      ansible.builtin.file:
+        path: "{{ elegooslicer_tmp.path }}"
+        state: absent
