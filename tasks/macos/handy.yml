@@ -1,0 +1,45 @@
+---
+# Install Handy for macOS via DMG
+
+- name: Check if Handy is already installed
+  ansible.builtin.stat:
+    path: /Applications/Handy.app
+  register: handy_app
+
+- name: Install Handy
+  when: not handy_app.stat.exists
+  block:
+    - name: Create temp directory for DMG
+      ansible.builtin.tempfile:
+        state: directory
+        suffix: .handy
+      register: handy_tmp
+
+    - name: Download Handy DMG
+      ansible.builtin.get_url:
+        url: "{{ handy_macos_url }}"
+        dest: "{{ handy_tmp.path }}/Handy.dmg"
+
+    - name: Mount Handy DMG
+      ansible.builtin.command:
+        cmd: hdiutil attach "{{ handy_tmp.path }}/Handy.dmg" -nobrowse -readonly
+      register: handy_mount
+      changed_when: true
+
+    - name: Find mounted volume
+      ansible.builtin.set_fact:
+        handy_volume: "{{ handy_mount.stdout_lines | last | regex_search('(/Volumes/[^\\s]+)') }}"
+
+    - name: Copy Handy to Applications
+      ansible.builtin.command:
+        cmd: cp -R "{{ handy_volume }}/Handy.app" /Applications/
+
+    - name: Unmount Handy DMG
+      ansible.builtin.command:
+        cmd: hdiutil detach "{{ handy_volume }}"
+      changed_when: true
+
+    - name: Clean up temp directory
+      ansible.builtin.file:
+        path: "{{ handy_tmp.path }}"
+        state: absent

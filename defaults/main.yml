@@ -160,6 +160,7 @@ appimage_versions:
   obsidian: "1.12.7"
   rquickshare: "0.11.5"
   elegooslicer: "1.3.0.11"
+  handy: "0.8.1"
 
 appimages:
   - appimage_url: "https://github.com/nextcloud-releases/desktop/releases/download/v{{ appimage_versions.nextcloud }}/Nextcloud-{{ appimage_versions.nextcloud }}-x86_64.AppImage"
@@ -171,6 +172,8 @@ appimages:
     appimage_alias: rquickshare
   - appimage_url: "https://github.com/ELEGOO-3D/ElegooSlicer/releases/download/v{{ appimage_versions.elegooslicer }}/ElegooSlicer_Linux_Ubuntu2404_V{{ appimage_versions.elegooslicer }}.AppImage"
     appimage_alias: elegooslicer
+  - appimage_url: "https://github.com/cjpais/Handy/releases/download/v{{ appimage_versions.handy }}/Handy_{{ appimage_versions.handy }}_amd64.AppImage"
+    appimage_alias: handy
 
 # ============================================
 # SNAP PACKAGES (Linux)
@@ -215,6 +218,13 @@ anki_dependencies:
 # ============================================
 
 elegooslicer_macos_url: "https://github.com/ELEGOO-3D/ElegooSlicer/releases/download/v{{ appimage_versions.elegooslicer }}/ElegooSlicer_Mac_{{ ansible_architecture | replace('x86_64', 'x86_64') | replace('aarch64', 'arm64') }}_V{{ appimage_versions.elegooslicer }}.dmg"
+
+# ============================================
+# HANDY (macOS)
+# ============================================
+
+handy_macos_arch: "{{ 'aarch64' if ansible_architecture in ['aarch64', 'arm64'] else 'x64' }}"
+handy_macos_url: "https://github.com/cjpais/Handy/releases/download/v{{ appimage_versions.handy }}/Handy_{{ appimage_versions.handy }}_{{ handy_macos_arch }}.dmg"
 
 # ============================================
 # HOMEBREW (macOS)
