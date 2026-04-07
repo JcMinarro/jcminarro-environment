@@ -7,6 +7,29 @@
     path: "{{ home_directory }}/.sdkman"
   register: sdkman_dir
 
+- name: Check for Homebrew Bash (ARM64)
+  ansible.builtin.stat:
+    path: /opt/homebrew/bin/bash
+  register: sdkman_bash_arm64
+  when: ansible_facts['os_family'] == "Darwin"
+
+- name: Check for Homebrew Bash (Intel)
+  ansible.builtin.stat:
+    path: /usr/local/bin/bash
+  register: sdkman_bash_intel
+  when: ansible_facts['os_family'] == "Darwin"
+
+- name: Ensure modern Bash is available for SDKMan on macOS
+  ansible.builtin.assert:
+    that:
+      - sdkman_bash_arm64.stat.exists or sdkman_bash_intel.stat.exists
+    fail_msg: "SDKMAN requires Bash 4+. Install Homebrew Bash before running the SDKMAN tasks."
+  when: ansible_facts['os_family'] == "Darwin"
+
+- name: Select Bash executable for SDKMan
+  ansible.builtin.set_fact:
+    sdkman_shell: "{{ '/opt/homebrew/bin/bash' if ansible_facts['os_family'] == 'Darwin' and sdkman_bash_arm64.stat.exists else '/usr/local/bin/bash' if ansible_facts['os_family'] == 'Darwin' else '/bin/bash' }}"
+
 - name: Download SDKMan installer
   ansible.builtin.get_url:
     url: https://get.sdkman.io
@@ -17,9 +40,10 @@
 - name: Install SDKMan
   ansible.builtin.shell: |
     export SDKMAN_DIR="$HOME/.sdkman"
-    bash /tmp/sdkman_install.sh
+    {{ sdkman_shell }} /tmp/sdkman_install.sh
   args:
     creates: "{{ home_directory }}/.sdkman/bin/sdkman-init.sh"
+    executable: "{{ sdkman_shell }}"
   when: not sdkman_dir.stat.exists
   environment:
     HOME: "{{ home_directory }}"

@@ -2,11 +2,10 @@
 # Install Homebrew formulas
 
 - name: Update Homebrew
-  ansible.builtin.homebrew:
+  community.general.homebrew:
     update_homebrew: true
 
 - name: Install Homebrew formulas
-  ansible.builtin.homebrew:
-    name: "{{ item }}"
+  community.general.homebrew:
+    name: "{{ brew_formulas }}"
     state: present
-  loop: "{{ brew_formulas }}"

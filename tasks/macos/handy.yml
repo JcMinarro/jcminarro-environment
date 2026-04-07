@@ -7,7 +7,7 @@
   register: handy_app
 
 - name: Install Handy
-  when: not handy_app.stat.exists
+  when: not handy_app.stat.exists and not ansible_check_mode
   block:
     - name: Create temp directory for DMG
       ansible.builtin.tempfile:

@@ -3,7 +3,7 @@
 # Only applied when apply_macos_tweaks is true
 
 - name: Show hidden files in Finder
-  ansible.builtin.osx_defaults:
+  community.general.osx_defaults:
     domain: com.apple.finder
     key: AppleShowAllFiles
     type: bool
@@ -12,7 +12,7 @@
   when: apply_macos_tweaks | bool
 
 - name: Show path bar in Finder
-  ansible.builtin.osx_defaults:
+  community.general.osx_defaults:
     domain: com.apple.finder
     key: ShowPathbar
     type: bool
@@ -21,7 +21,7 @@
   when: apply_macos_tweaks | bool
 
 - name: Show status bar in Finder
-  ansible.builtin.osx_defaults:
+  community.general.osx_defaults:
     domain: com.apple.finder
     key: ShowStatusBar
     type: bool
@@ -30,7 +30,7 @@
   when: apply_macos_tweaks | bool
 
 - name: Set dock autohide
-  ansible.builtin.osx_defaults:
+  community.general.osx_defaults:
     domain: com.apple.dock
     key: autohide
     type: bool
@@ -39,7 +39,7 @@
   when: apply_macos_tweaks | bool
 
 - name: Set fast key repeat rate
-  ansible.builtin.osx_defaults:
+  community.general.osx_defaults:
     domain: NSGlobalDomain
     key: KeyRepeat
     type: int
@@ -47,7 +47,7 @@
   when: apply_macos_tweaks | bool
 
 - name: Set short initial key repeat delay
-  ansible.builtin.osx_defaults:
+  community.general.osx_defaults:
     domain: NSGlobalDomain
     key: InitialKeyRepeat
     type: int
@@ -55,7 +55,7 @@
   when: apply_macos_tweaks | bool
 
 - name: Enable tap to click
-  ansible.builtin.osx_defaults:
+  community.general.osx_defaults:
     domain: com.apple.AppleMultitouchTrackpad
     key: Clicking
     type: bool

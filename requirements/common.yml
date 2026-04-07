@@ -8,6 +8,9 @@ roles:
     # SDKMan works the same on Linux and macOS
     # Manages Java, Kotlin, Gradle, etc. versions
 
+collections:
+  - name: community.general
+
 # Note: darkwizard242 roles only work on Linux (apt-based)
 # For macOS, we use homebrew instead of these roles:
 # - darkwizard242.googlechrome → homebrew_cask: google-chrome

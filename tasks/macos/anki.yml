@@ -7,7 +7,7 @@
   register: anki_app
 
 - name: Install Anki via Homebrew Cask
-  ansible.builtin.homebrew_cask:
+  community.general.homebrew_cask:
     name: anki
     state: present
   when: not anki_app.stat.exists

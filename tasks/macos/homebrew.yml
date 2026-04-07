@@ -23,11 +23,16 @@
     path: "{{ home_directory }}/.zprofile"
     line: 'eval "$(/opt/homebrew/bin/brew shellenv)"'
     create: true
-  when: homebrew_arm64.stat.exists or (not homebrew_intel.stat.exists and ansible_architecture == "arm64")
+  when: homebrew_arm64.stat.exists or (not homebrew_intel.stat.exists and ansible_facts['architecture'] == "arm64")
 
 - name: Add Homebrew to PATH (Intel)
   ansible.builtin.lineinfile:
     path: "{{ home_directory }}/.zprofile"
     line: 'eval "$(/usr/local/bin/brew shellenv)"'
     create: true
-  when: homebrew_intel.stat.exists or (not homebrew_arm64.stat.exists and ansible_architecture != "arm64")
+  when: homebrew_intel.stat.exists or (not homebrew_arm64.stat.exists and ansible_facts['architecture'] != "arm64")
+
+- name: Install modern Bash for macOS tooling
+  community.general.homebrew:
+    name: bash
+    state: present

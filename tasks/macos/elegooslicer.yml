@@ -7,7 +7,7 @@
   register: elegooslicer_app
 
 - name: Install ElegooSlicer
-  when: not elegooslicer_app.stat.exists
+  when: not elegooslicer_app.stat.exists and not ansible_check_mode
   block:
     - name: Create temp directory for DMG
       ansible.builtin.tempfile:
