@@ -1,12 +1,6 @@
 ---
 # macOS-specific tasks
 
-- name: Install Homebrew
-  ansible.builtin.import_tasks: macos/homebrew.yml
-  tags:
-    - macos
-    - homebrew
-
 - name: Install Homebrew formulas
   ansible.builtin.import_tasks: macos/formulas.yml
   tags:
@@ -44,6 +38,12 @@
   tags:
     - macos
     - handy
+
+- name: Install RQuickShare
+  ansible.builtin.import_tasks: macos/rquickshare.yml
+  tags:
+    - macos
+    - rquickshare
 
 - name: Apply system tweaks
   ansible.builtin.import_tasks: macos/system_tweaks.yml

@@ -1,0 +1,48 @@
+---
+# Install RQuickShare for macOS via DMG
+
+- name: Check if RQuickShare is already installed
+  ansible.builtin.find:
+    paths: /Applications
+    patterns: "*QuickShare*.app"
+    file_type: directory
+    recurse: false
+  register: rquickshare_apps
+
+- name: Install RQuickShare
+  when: rquickshare_apps.matched == 0 and not ansible_check_mode
+  block:
+    - name: Create temp directory for DMG
+      ansible.builtin.tempfile:
+        state: directory
+        suffix: .rquickshare
+      register: rquickshare_tmp
+
+    - name: Download RQuickShare DMG
+      ansible.builtin.get_url:
+        url: "{{ rquickshare_macos_url }}"
+        dest: "{{ rquickshare_tmp.path }}/RQuickShare.dmg"
+
+    - name: Mount RQuickShare DMG
+      ansible.builtin.command:
+        cmd: hdiutil attach "{{ rquickshare_tmp.path }}/RQuickShare.dmg" -nobrowse -readonly
+      register: rquickshare_mount
+      changed_when: true
+
+    - name: Find mounted volume
+      ansible.builtin.set_fact:
+        rquickshare_volume: "{{ rquickshare_mount.stdout_lines | last | regex_search('(/Volumes/[^\\s]+)') }}"
+
+    - name: Copy RQuickShare to Applications
+      ansible.builtin.shell: cp -R "{{ rquickshare_volume }}"/*.app /Applications/
+      changed_when: true
+
+    - name: Unmount RQuickShare DMG
+      ansible.builtin.command:
+        cmd: hdiutil detach "{{ rquickshare_volume }}"
+      changed_when: true
+
+    - name: Clean up temp directory
+      ansible.builtin.file:
+        path: "{{ rquickshare_tmp.path }}"
+        state: absent

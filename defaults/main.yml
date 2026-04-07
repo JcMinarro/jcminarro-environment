@@ -227,6 +227,13 @@ handy_macos_arch: "{{ 'aarch64' if ansible_facts['architecture'] in ['aarch64', 
 handy_macos_url: "https://github.com/cjpais/Handy/releases/download/v{{ appimage_versions.handy }}/Handy_{{ appimage_versions.handy }}_{{ handy_macos_arch }}.dmg"
 
 # ============================================
+# RQUICKSHARE (macOS)
+# ============================================
+
+rquickshare_macos_arch: "{{ 'aarch64' if ansible_facts['architecture'] in ['aarch64', 'arm64'] else 'x64' }}"
+rquickshare_macos_url: "https://github.com/Martichou/rquickshare/releases/download/v{{ appimage_versions.rquickshare }}/r-quick-share-main_v{{ appimage_versions.rquickshare }}_{{ rquickshare_macos_arch }}.dmg"
+
+# ============================================
 # HOMEBREW (macOS)
 # ============================================
 
