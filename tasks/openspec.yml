@@ -4,29 +4,40 @@
 # OpenSpec is installed as a global npm package
 
 - name: Check if OpenSpec is already installed
-  ansible.builtin.command: which openspec
+  ansible.builtin.shell: command -v openspec
   register: openspec_which
-  ignore_errors: true
+  failed_when: false
   changed_when: false
+  args:
+    executable: /bin/bash
+  environment:
+    PATH: "{{ home_directory }}/n/bin:{{ ansible_facts['env']['PATH'] }}"
 
 - name: Check OpenSpec installation path
   ansible.builtin.stat:
-    path: /usr/local/bin/openspec
+    path: "{{ home_directory }}/n/bin/openspec"
   register: openspec_stat
   when: openspec_which.rc == 0
 
 - name: Install OpenSpec via npm (global)
-  ansible.builtin.command: npm install -g @fission-ai/openspec
+  ansible.builtin.shell: |
+    export N_PREFIX="{{ home_directory }}/n"
+    export PATH="$N_PREFIX/bin:$PATH"
+    npm install -g @fission-ai/openspec
   args:
-    creates: /usr/local/bin/openspec
-  become: true
+    creates: "{{ home_directory }}/n/bin/openspec"
+    executable: /bin/bash
   when: openspec_which.rc != 0 or not openspec_stat.stat.exists
 
 - name: Verify OpenSpec installation
-  ansible.builtin.command: openspec --version
+  ansible.builtin.shell: openspec --version
   register: openspec_version
   changed_when: false
-  ignore_errors: true
+  failed_when: false
+  args:
+    executable: /bin/bash
+  environment:
+    PATH: "{{ home_directory }}/n/bin:{{ ansible_facts['env']['PATH'] }}"
 
 - name: Display OpenSpec version
   ansible.builtin.debug:

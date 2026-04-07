@@ -44,6 +44,7 @@
 
 - name: Install OpenCode
   ansible.builtin.include_tasks: opencode.yml
+  when: install_opencode | bool
   tags:
     - common
     - opencode
@@ -51,6 +52,7 @@
 
 - name: Install OpenSpec
   ansible.builtin.include_tasks: openspec.yml
+  when: install_openspec | bool
   tags:
     - common
     - openspec

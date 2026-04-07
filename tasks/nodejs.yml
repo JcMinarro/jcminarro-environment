@@ -8,7 +8,7 @@
     name:
       - build-essential
     state: present
-  when: ansible_os_family in ["Debian", "RedHat"]
+  when: ansible_facts['os_family'] in ["Debian", "RedHat"]
 
 - name: Check if n is installed
   ansible.builtin.stat:
@@ -38,9 +38,27 @@
     marker: "# {mark} ANSIBLE MANAGED BLOCK - n (Node version manager)"
     create: true
 
+- name: Ensure n and node are in PATH (bash profile)
+  ansible.builtin.blockinfile:
+    path: "{{ home_directory }}/.bash_profile"
+    block: |
+      export N_PREFIX="$HOME/n"
+      export PATH="$N_PREFIX/bin:$PATH"
+    marker: "# {mark} ANSIBLE MANAGED BLOCK - n (Node version manager)"
+    create: true
+
 - name: Ensure n and node are in PATH (zsh)
   ansible.builtin.blockinfile:
     path: "{{ home_directory }}/.zshrc"
+    block: |
+      export N_PREFIX="$HOME/n"
+      export PATH="$N_PREFIX/bin:$PATH"
+    marker: "# {mark} ANSIBLE MANAGED BLOCK - n (Node version manager)"
+    create: true
+
+- name: Ensure n and node are in PATH (zsh profile)
+  ansible.builtin.blockinfile:
+    path: "{{ home_directory }}/.zprofile"
     block: |
       export N_PREFIX="$HOME/n"
       export PATH="$N_PREFIX/bin:$PATH"
