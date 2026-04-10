@@ -32,18 +32,32 @@
     state: present
     accept_external_apps: true
     sudo_password: "{{ docker_cask_sudo_password | default(macos_privileged_cask_sudo_password) | default(ansible_become_pass) | default(omit) }}"
+  register: docker_cask_install
   when: not docker_app.stat.exists
+
+- name: Launch Docker Desktop after first install
+  ansible.builtin.command: open -a Docker
+  changed_when: false
+  when:
+    - docker_cask_install is defined
+    - docker_cask_install is changed
 
 - name: Wait for Docker to be ready
   ansible.builtin.command: docker version
   register: docker_version
   until: docker_version.rc == 0
-  retries: 10
-  delay: 10
+  retries: 6
+  delay: 5
   failed_when: false
   changed_when: false
+  when:
+    - docker_cask_install is defined
+    - docker_cask_install is changed
 
 - name: Warn when Docker daemon is not ready yet
   ansible.builtin.debug:
     msg: "Docker Desktop is installed, but the daemon is not ready yet. Start Docker.app and wait for it to finish booting."
-  when: docker_version.rc != 0
+  when:
+    - docker_version is defined
+    - docker_version.rc is defined
+    - docker_version.rc != 0
