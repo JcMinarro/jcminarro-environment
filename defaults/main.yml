@@ -299,6 +299,7 @@ brew_casks:
   - flameshot
   - anki
   - tailscale
+  - scroll-reverser
   # Replacement for peek (GIF recording)
   - licecap
 
