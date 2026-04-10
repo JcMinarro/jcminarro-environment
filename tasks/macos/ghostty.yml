@@ -1,0 +1,58 @@
+---
+# Configure Ghostty for macOS
+
+- name: Check if Ghostty is installed
+  ansible.builtin.stat:
+    path: /Applications/Ghostty.app
+  register: ghostty_app
+
+- name: Ensure Ghostty config directory exists
+  ansible.builtin.file:
+    path: "{{ ghostty_config_directory }}"
+    state: directory
+    mode: '0755'
+  when:
+    - configure_ghostty | bool
+    - ghostty_app.stat.exists
+
+- name: Install Ghostty quick terminal config
+  ansible.builtin.blockinfile:
+    path: "{{ ghostty_config_file }}"
+    block: |
+      {% for line in ghostty_quick_terminal_lines %}
+      {{ line }}
+      {% endfor %}
+    marker: "# {mark} ANSIBLE MANAGED BLOCK - ghostty quick terminal"
+    create: true
+    mode: '0644'
+  when:
+    - configure_ghostty | bool
+    - ghostty_app.stat.exists
+
+- name: Check if Ghostty login item exists
+  ansible.builtin.command:
+    cmd: osascript -e 'tell application "System Events" to get the name of every login item'
+  register: ghostty_login_items
+  changed_when: false
+  when:
+    - configure_ghostty | bool
+    - ghostty_launch_at_login | bool
+    - ghostty_app.stat.exists
+
+- name: Add Ghostty to login items
+  ansible.builtin.command:
+    cmd: >-
+      osascript -e 'tell application "System Events" to make login item at end with properties
+      {name:"Ghostty", path:"/Applications/Ghostty.app", hidden:{{ ghostty_login_item_hidden | lower }}}'
+  when:
+    - configure_ghostty | bool
+    - ghostty_launch_at_login | bool
+    - ghostty_app.stat.exists
+    - "'Ghostty' not in ghostty_login_items.stdout"
+
+- name: Warn about Ghostty accessibility permission
+  ansible.builtin.debug:
+    msg: "Ghostty quick terminal uses a global shortcut. Ensure Ghostty is allowed in System Settings > Privacy & Security > Accessibility."
+  when:
+    - configure_ghostty | bool
+    - ghostty_app.stat.exists

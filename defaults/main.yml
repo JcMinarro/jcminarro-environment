@@ -282,6 +282,7 @@ brew_casks:
   - sublime-text
   - docker
   - iterm2
+  - ghostty
   # Communication
   - slack
   - telegram
@@ -331,6 +332,29 @@ anki_macos_install_method: "cask"
 
 default_shell: "zsh"
 terminal_app: "iterm2"
+
+# ============================================
+# GHOSTTY (macOS)
+# ============================================
+
+configure_ghostty: true
+ghostty_config_directory: "{{ home_directory }}/Library/Application Support/com.mitchellh.ghostty"
+ghostty_config_file: "{{ ghostty_config_directory }}/config.ghostty"
+ghostty_launch_at_login: true
+ghostty_login_item_hidden: true
+ghostty_macos_hidden: always
+ghostty_quick_terminal_keybind: "global:f12=toggle_quick_terminal"
+ghostty_quick_terminal_position: top
+ghostty_quick_terminal_size: 40%
+ghostty_quick_terminal_autohide: false
+ghostty_quick_terminal_space_behavior: move
+ghostty_quick_terminal_lines:
+  - "macos-hidden = {{ ghostty_macos_hidden }}"
+  - "keybind = {{ ghostty_quick_terminal_keybind }}"
+  - "quick-terminal-position = {{ ghostty_quick_terminal_position }}"
+  - "quick-terminal-size = {{ ghostty_quick_terminal_size }}"
+  - "quick-terminal-autohide = {{ ghostty_quick_terminal_autohide | lower }}"
+  - "quick-terminal-space-behavior = {{ ghostty_quick_terminal_space_behavior }}"
 
 # ============================================
 # SYSTEM TWEAKS (macOS)

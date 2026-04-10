@@ -45,6 +45,12 @@
     - macos
     - rquickshare
 
+- name: Configure Ghostty
+  ansible.builtin.import_tasks: macos/ghostty.yml
+  tags:
+    - macos
+    - ghostty
+
 - name: Apply system tweaks
   ansible.builtin.import_tasks: macos/system_tweaks.yml
   tags:
