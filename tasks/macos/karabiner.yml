@@ -1,0 +1,37 @@
+---
+# Configure Karabiner-Elements for external keyboards
+
+- name: Check if Karabiner-Elements is installed
+  ansible.builtin.stat:
+    path: /Applications/Karabiner-Elements.app
+  register: karabiner_app
+  when: install_karabiner | bool
+
+- name: Ensure Karabiner config directory exists
+  ansible.builtin.file:
+    path: "{{ karabiner_config_directory }}"
+    state: directory
+    mode: '0755'
+  when:
+    - configure_karabiner | bool
+    - karabiner_app.stat.exists
+
+- name: Install Karabiner profile for external Spanish ISO PC keyboard
+  ansible.builtin.template:
+    src: karabiner.json.j2
+    dest: "{{ karabiner_config_file }}"
+    mode: '0644'
+    backup: true
+  when:
+    - configure_karabiner | bool
+    - karabiner_app.stat.exists
+
+- name: Warn about Karabiner permissions and next steps
+  ansible.builtin.debug:
+    msg: >-
+      Karabiner-Elements needs Accessibility and Input Monitoring permissions.
+      Open Karabiner-EventViewer after installation and capture the external keyboard key codes
+      and device identifiers before enabling the managed profile.
+  when:
+    - install_karabiner | bool
+    - karabiner_app.stat.exists

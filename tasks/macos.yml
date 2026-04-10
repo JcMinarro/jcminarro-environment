@@ -51,6 +51,20 @@
     - macos
     - ghostty
 
+- name: Configure custom keyboard layout
+  ansible.builtin.import_tasks: macos/keyboard_layout.yml
+  tags:
+    - macos
+    - keyboard
+    - keyboard-layout
+
+- name: Configure Karabiner-Elements
+  ansible.builtin.import_tasks: macos/karabiner.yml
+  tags:
+    - macos
+    - keyboard
+    - karabiner
+
 - name: Apply system tweaks
   ansible.builtin.import_tasks: macos/system_tweaks.yml
   tags:

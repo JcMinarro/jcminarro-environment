@@ -27,6 +27,10 @@ configure_dotfiles: false
 install_opencode: true
 install_openspec: true
 apply_macos_tweaks: false
+install_karabiner: true
+configure_karabiner: true
+configure_macos_keyboard_layout: true
+configure_macos_function_keys: true
 
 # ============================================
 # GIT CONFIGURATION
@@ -300,6 +304,7 @@ brew_casks:
   - anki
   - tailscale
   - scroll-reverser
+  - karabiner-elements
   # Replacement for peek (GIF recording)
   - licecap
 
@@ -356,6 +361,29 @@ ghostty_quick_terminal_lines:
   - "quick-terminal-size = {{ ghostty_quick_terminal_size }}"
   - "quick-terminal-autohide = {{ ghostty_quick_terminal_autohide | lower }}"
   - "quick-terminal-space-behavior = {{ ghostty_quick_terminal_space_behavior }}"
+
+# ============================================
+# KARABINER-ELEMENTS (macOS)
+# ============================================
+
+karabiner_config_directory: "{{ home_directory }}/.config/karabiner"
+karabiner_config_file: "{{ karabiner_config_directory }}/karabiner.json"
+karabiner_profile_name: "External Spanish ISO PC"
+karabiner_external_keyboard_identifiers:
+  - vendor_id: 1241
+    product_id: 6168
+    is_keyboard: true
+
+# ============================================
+# KEYBOARD LAYOUT (macOS)
+# ============================================
+
+macos_keyboard_layout_name: "Spanish ISO PC"
+macos_keyboard_layout_id: -18442
+macos_keyboard_layout_filename: "Spanish-ISO-PC.keylayout"
+macos_keyboard_layout_directory: "{{ home_directory }}/Library/Keyboard Layouts"
+macos_keyboard_layout_file: "{{ macos_keyboard_layout_directory }}/{{ macos_keyboard_layout_filename }}"
+macos_keyboard_layout_input_source_id: "com.apple.keylayout.Spanish-ISO-PC"
 
 # ============================================
 # SYSTEM TWEAKS (macOS)

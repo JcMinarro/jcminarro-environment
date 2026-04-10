@@ -1,0 +1,32 @@
+---
+# Install and select a native macOS keyboard layout for Spanish ISO PC
+
+- name: Ensure custom keyboard layout directory exists
+  ansible.builtin.file:
+    path: "{{ macos_keyboard_layout_directory }}"
+    state: directory
+    mode: '0755'
+  when: configure_macos_keyboard_layout | bool
+
+- name: Use F1-F12 as standard function keys
+  community.general.osx_defaults:
+    domain: NSGlobalDomain
+    key: com.apple.keyboard.fnState
+    type: bool
+    value: "{{ configure_macos_function_keys }}"
+  when: configure_macos_function_keys | bool
+
+- name: Install vendored keyboard layout
+  ansible.builtin.copy:
+    src: keyboard_layouts/Spanish-ISO-PC.keylayout
+    dest: "{{ macos_keyboard_layout_file }}"
+    mode: '0644'
+  when: configure_macos_keyboard_layout | bool
+
+- name: Warn about manual keyboard layout activation
+  ansible.builtin.debug:
+    msg: >-
+      The native keyboard layout {{ macos_keyboard_layout_name }} has been installed.
+      Select it manually in System Settings > Keyboard > Input Sources.
+      If it does not appear immediately, log out and back in once so macOS reloads available layouts.
+  when: configure_macos_keyboard_layout | bool
