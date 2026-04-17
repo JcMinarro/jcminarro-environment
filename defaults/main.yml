@@ -39,6 +39,7 @@ configure_macos_function_keys: true
 git_user_name: "Jc Miñarro"
 git_user_email: "josecarlos.minarro@gmail.com"
 git_core_editor: "vim"
+git_disable_hooks: false
 
 # ============================================
 # SDKMAN CONFIGURATION
