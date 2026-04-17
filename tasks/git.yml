@@ -56,3 +56,11 @@
     name: core.hooksPath
     value: "/dev/null"
     scope: global
+
+- name: Enable bash-completion for git (macOS)
+  ansible.builtin.lineinfile:
+    path: "{{ home_directory }}/.bash_profile"
+    line: '[[ -r "{{ homebrew_prefix }}/etc/profile.d/bash_completion.sh" ]] && . "{{ homebrew_prefix }}/etc/profile.d/bash_completion.sh"'
+    create: true
+    mode: '0644'
+  when: ansible_facts['os_family'] == "Darwin"
