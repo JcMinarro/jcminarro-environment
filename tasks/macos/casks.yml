@@ -6,6 +6,7 @@
     prompt: "Enter sudo password for macOS cask installations that require privileges"
     echo: false
   register: macos_privileged_cask_password_prompt
+  no_log: true
   when:
     - brew_casks | length > 0
     - ansible_become_pass is not defined
@@ -15,6 +16,7 @@
 - name: Store sudo password for privileged casks
   ansible.builtin.set_fact:
     macos_privileged_cask_sudo_password: "{{ macos_privileged_cask_password_prompt.user_input }}"
+  no_log: true
   when:
     - macos_privileged_cask_password_prompt is defined
     - macos_privileged_cask_password_prompt.user_input is defined
