@@ -66,17 +66,7 @@
     dest: "/usr/share/mime/packages/anki.xml"
     mode: '0644'
     remote_src: true
-
-- name: Check MIME database timestamp
-  ansible.builtin.stat:
-    path: /usr/share/mime/packages/anki.xml
-  register: mime_file
-
-- name: Update MIME database
-  become: true
-  ansible.builtin.command: update-mime-database /usr/share/mime
-  when: not mime_file.stat.exists
-  changed_when: true
+  notify: Update MIME database
 
 - name: Check current MIME defaults
   ansible.builtin.command: xdg-mime query default {{ item }}
