@@ -39,7 +39,21 @@
         cmd: hdiutil detach "{{ handy_volume }}"
       changed_when: true
 
+  rescue:
+    - name: Unmount Handy DMG on failure
+      ansible.builtin.command:
+        cmd: hdiutil detach "{{ handy_volume }}"
+      when: handy_volume is defined
+      failed_when: false
+      changed_when: false
+
+    - name: Re-raise Handy install failure
+      ansible.builtin.fail:
+        msg: "Handy installation failed. DMG has been unmounted."
+
+  always:
     - name: Clean up temp directory
       ansible.builtin.file:
         path: "{{ handy_tmp.path }}"
         state: absent
+      when: handy_tmp is defined

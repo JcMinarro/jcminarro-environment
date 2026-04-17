@@ -42,7 +42,21 @@
         cmd: hdiutil detach "{{ rquickshare_volume }}"
       changed_when: true
 
+  rescue:
+    - name: Unmount RQuickShare DMG on failure
+      ansible.builtin.command:
+        cmd: hdiutil detach "{{ rquickshare_volume }}"
+      when: rquickshare_volume is defined
+      failed_when: false
+      changed_when: false
+
+    - name: Re-raise RQuickShare install failure
+      ansible.builtin.fail:
+        msg: "RQuickShare installation failed. DMG has been unmounted."
+
+  always:
     - name: Clean up temp directory
       ansible.builtin.file:
         path: "{{ rquickshare_tmp.path }}"
         state: absent
+      when: rquickshare_tmp is defined
