@@ -27,7 +27,7 @@
   args:
     creates: "{{ home_directory }}/n/bin/openspec"
     executable: /bin/bash
-  when: openspec_which.rc != 0 or not openspec_stat.stat.exists
+  when: openspec_which.rc != 0 or (openspec_stat is defined and not openspec_stat.stat.exists)
 
 - name: Verify OpenSpec installation
   ansible.builtin.shell: openspec --version
