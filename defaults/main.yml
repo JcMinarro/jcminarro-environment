@@ -385,7 +385,7 @@ macos_keyboard_layout_id: -18442
 macos_keyboard_layout_filename: "Spanish-ISO-PC.keylayout"
 macos_keyboard_layout_directory: "{{ home_directory }}/Library/Keyboard Layouts"
 macos_keyboard_layout_file: "{{ macos_keyboard_layout_directory }}/{{ macos_keyboard_layout_filename }}"
-macos_keyboard_layout_input_source_id: "com.apple.keylayout.Spanish-ISO-PC"
+macos_keyboard_layout_input_source_id: "org.unknown.keylayout.SpanishISOPC"
 
 # ============================================
 # SYSTEM TWEAKS (macOS)

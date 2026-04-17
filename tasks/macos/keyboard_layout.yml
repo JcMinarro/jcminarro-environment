@@ -27,6 +27,6 @@
   ansible.builtin.debug:
     msg: >-
       The native keyboard layout {{ macos_keyboard_layout_name }} has been installed.
-      Select it manually in System Settings > Keyboard > Input Sources.
-      If it does not appear immediately, log out and back in once so macOS reloads available layouts.
+      Add or select it manually in System Settings > Keyboard > Input Sources.
+      If macOS shows stale entries or old mappings, log out and back in once after re-adding the layout.
   when: configure_macos_keyboard_layout | bool

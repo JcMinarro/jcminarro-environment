@@ -66,6 +66,54 @@
             ]
           },
           {
+            "description": "Fix two Spanish ISO PC punctuation keys on external keyboard",
+            "manipulators": [
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "hyphen",
+                  "modifiers": {
+                    "optional": []
+                  }
+                },
+                "to": [
+                  {
+                    "shell_command": "/usr/bin/osascript -e \"tell application \\\"System Events\\\" to keystroke \\\"'\\\"\""
+                  },
+                  {
+                    "key_code": "vk_none"
+                  }
+                ],
+                "conditions": [
+                  {
+                    "type": "device_if",
+                    "identifiers": {{ external_identifiers }}
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "slash",
+                  "modifiers": {
+                    "optional": []
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "hyphen"
+                  }
+                ],
+                "conditions": [
+                  {
+                    "type": "device_if",
+                    "identifiers": {{ external_identifiers }}
+                  }
+                ]
+              }
+            ]
+          },
+          {
             "description": "Swap AltGr+3 and Shift+3 in Google Chrome so Gmail delete shortcut works",
             "manipulators": [
               {
