@@ -155,7 +155,8 @@ docker_packages:
 
 docker_keyrings_dir: /etc/apt/keyrings
 docker_gpg_key_url: https://download.docker.com/linux/ubuntu/gpg
-docker_repo: "deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu {{ ansible_facts['distribution_release'] }} stable"
+docker_arch: "{{ 'arm64' if ansible_facts['architecture'] == 'aarch64' else 'amd64' }}"
+docker_repo: "deb [arch={{ docker_arch }} signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu {{ ansible_facts['distribution_release'] }} stable"
 
 # ============================================
 # APPIMAGES (Linux)
@@ -304,7 +305,6 @@ brew_casks:
   - gimp
   # Tools
   - flameshot
-  - anki
   - tailscale
   - scroll-reverser
   - karabiner-elements
