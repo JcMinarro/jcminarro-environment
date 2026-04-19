@@ -1,0 +1,16 @@
+---
+# Install and enable SSH server on Linux
+
+- name: Install openssh-server
+  become: true
+  ansible.builtin.apt:
+    name: openssh-server
+    state: present
+    update_cache: true
+
+- name: Enable and start SSH service
+  become: true
+  ansible.builtin.service:
+    name: ssh
+    state: started
+    enabled: true

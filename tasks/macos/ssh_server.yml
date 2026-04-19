@@ -1,0 +1,15 @@
+---
+# Enable SSH server (Remote Login) on macOS
+
+- name: Check if Remote Login (SSH) is enabled
+  ansible.builtin.command:
+    cmd: launchctl list com.openssh.sshd
+  register: ssh_server_status
+  changed_when: false
+  failed_when: false
+
+- name: Enable Remote Login (SSH server)
+  become: true
+  ansible.builtin.command:
+    cmd: launchctl load -w /System/Library/LaunchDaemons/ssh.plist
+  when: ssh_server_status.rc != 0

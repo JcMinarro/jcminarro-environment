@@ -21,6 +21,7 @@ ssh_config_file: "{{ ssh_directory }}/config"
 
 configure_git: true
 configure_ssh: true
+install_ssh_server: true
 install_nodejs: true
 install_sdkman: true
 configure_dotfiles: false
@@ -124,6 +125,7 @@ system_packages:
   - libfuse2t64
   - wireguard
   - sshpass
+  - sshfs
   # Terminal
   - guake
   # Security
@@ -267,6 +269,7 @@ brew_formulas:
   - p7zip
   - xz
   - sshpass
+  - sshfs
   # Network Tools
   - mtr
   - tailscale
@@ -303,6 +306,8 @@ brew_casks:
   # Multimedia
   - vlc
   - gimp
+  # Filesystem
+  - macfuse
   # Tools
   - flameshot
   - tailscale
