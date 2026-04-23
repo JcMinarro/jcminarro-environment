@@ -37,3 +37,15 @@
     state: present
     accept_external_apps: true
     sudo_password: "{{ macos_privileged_cask_sudo_password | default(ansible_become_pass) | default(omit) }}"
+
+- name: Tap gromgit/fuse for sshfs-mac
+  community.general.homebrew_tap:
+    name: gromgit/fuse
+    state: present
+  when: "'macfuse' in brew_casks"
+
+- name: Install sshfs-mac (requires macFUSE cask)
+  community.general.homebrew:
+    name: gromgit/fuse/sshfs-mac
+    state: present
+  when: "'macfuse' in brew_casks"

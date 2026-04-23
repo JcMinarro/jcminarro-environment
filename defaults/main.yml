@@ -269,7 +269,6 @@ brew_formulas:
   - p7zip
   - xz
   - sshpass
-  - sshfs
   # Network Tools
   - mtr
   - tailscale
