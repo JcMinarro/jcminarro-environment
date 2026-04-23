@@ -25,7 +25,7 @@
 - name: Install n
   ansible.builtin.shell: |
     export N_PREFIX="{{ home_directory }}/n"
-    /tmp/n {{ n_version }}
+    /tmp/n {{ nodejs_version }}
   args:
     creates: "{{ home_directory }}/n/bin/n"
   when: not n_installed.stat.exists
