@@ -13,18 +13,18 @@
   tasks:
     - name: Install Linux-specific Galaxy roles
       ansible.builtin.command: |
-        ansible-galaxy install -r requirements/linux.yml --force
+        ansible-galaxy install -r requirements/linux.yml
       changed_when: false
       when: ansible_facts['os_family'] in ["Debian", "RedHat"]
 
     - name: Install common Galaxy roles (all OS)
       ansible.builtin.command: |
-        ansible-galaxy install -r requirements/common.yml --force
+        ansible-galaxy install -r requirements/common.yml
       changed_when: false
 
     - name: Install common Ansible collections
       ansible.builtin.command: |
-        ansible-galaxy collection install -r requirements/common.yml --force
+        ansible-galaxy collection install -r requirements/common.yml
       changed_when: false
 
   tags:
