@@ -3,11 +3,9 @@
 
 - name: Warn when privileged casks are skipped
   ansible.builtin.debug:
-    msg: "Skipping macOS casks that require sudo because no password is available in check mode. Run the playbook normally or with -K to validate/install privileged casks."
+    msg: "Skipping macOS casks that require sudo because no password is available in check mode. Run the playbook normally with -K to install privileged casks."
   when:
     - brew_casks | length > 0
-    - macos_privileged_cask_sudo_password is not defined
-    - ansible_become_pass is not defined
     - ansible_check_mode
 
 - name: Install Homebrew casks
@@ -15,7 +13,7 @@
     name: "{{ brew_casks | difference(['docker']) }}"
     state: present
     accept_external_apps: true
-    sudo_password: "{{ macos_privileged_cask_sudo_password | default(ansible_become_pass) | default(omit) }}"
+    sudo_password: "{{ ansible_become_pass | default(omit) }}"
 
 - name: Tap gromgit/fuse for sshfs-mac
   community.general.homebrew_tap:

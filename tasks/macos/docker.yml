@@ -11,7 +11,7 @@
     name: docker
     state: present
     accept_external_apps: true
-    sudo_password: "{{ macos_privileged_cask_sudo_password | default(ansible_become_pass) | default(omit) }}"
+    sudo_password: "{{ ansible_become_pass | default(omit) }}"
   register: docker_cask_install
   when: not docker_app.stat.exists
 
