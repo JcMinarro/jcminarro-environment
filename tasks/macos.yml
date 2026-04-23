@@ -1,6 +1,26 @@
 ---
 # macOS-specific tasks
 
+- name: Prompt for sudo password for macOS privileged installations
+  ansible.builtin.pause:
+    prompt: "Enter sudo password for macOS privileged installations (Homebrew casks, Docker Desktop)"
+    echo: false
+  register: macos_sudo_password_prompt
+  no_log: true
+  when:
+    - not ansible_check_mode
+    - ansible_become_pass is not defined
+    - macos_privileged_cask_sudo_password is not defined
+
+- name: Store sudo password for macOS privileged installations
+  ansible.builtin.set_fact:
+    macos_privileged_cask_sudo_password: "{{ macos_sudo_password_prompt.user_input }}"
+  no_log: true
+  when:
+    - macos_sudo_password_prompt is defined
+    - macos_sudo_password_prompt.user_input is defined
+    - macos_sudo_password_prompt.user_input | length > 0
+
 - name: Install SSH server
   ansible.builtin.import_tasks: macos/ssh_server.yml
   when: install_ssh_server | bool

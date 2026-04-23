@@ -1,34 +1,13 @@
 ---
 # Install Homebrew casks
 
-- name: Prompt for sudo password for privileged casks
-  ansible.builtin.pause:
-    prompt: "Enter sudo password for macOS cask installations that require privileges"
-    echo: false
-  register: macos_privileged_cask_password_prompt
-  no_log: true
-  when:
-    - brew_casks | length > 0
-    - ansible_become_pass is not defined
-    - macos_privileged_cask_sudo_password is not defined
-    - not ansible_check_mode
-
-- name: Store sudo password for privileged casks
-  ansible.builtin.set_fact:
-    macos_privileged_cask_sudo_password: "{{ macos_privileged_cask_password_prompt.user_input }}"
-  no_log: true
-  when:
-    - macos_privileged_cask_password_prompt is defined
-    - macos_privileged_cask_password_prompt.user_input is defined
-    - macos_privileged_cask_password_prompt.user_input | length > 0
-
 - name: Warn when privileged casks are skipped
   ansible.builtin.debug:
     msg: "Skipping macOS casks that require sudo because no password is available in check mode. Run the playbook normally or with -K to validate/install privileged casks."
   when:
     - brew_casks | length > 0
-    - ansible_become_pass is not defined
     - macos_privileged_cask_sudo_password is not defined
+    - ansible_become_pass is not defined
     - ansible_check_mode
 
 - name: Install Homebrew casks
