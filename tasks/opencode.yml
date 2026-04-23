@@ -16,6 +16,16 @@
   environment:
     HOME: "{{ home_directory }}"
 
+- name: Get installed OpenCode version
+  ansible.builtin.command: "{{ home_directory }}/.opencode/bin/opencode --version"
+  register: opencode_version
+  changed_when: false
+  failed_when: false
+
+- name: Log installed OpenCode version
+  ansible.builtin.debug:
+    msg: "OpenCode version: {{ opencode_version.stdout | default('unknown') }}"
+
 - name: Ensure OpenCode is in PATH (bash)
   ansible.builtin.lineinfile:
     path: "{{ home_directory }}/.bashrc"
