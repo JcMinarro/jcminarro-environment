@@ -1,5 +1,6 @@
 ---
 - hosts: localhost
-  remote_user: root
+  remote_user: "{{ lookup('env', 'USER') }}"
+  become: true
   roles:
     - jcminarro-environment

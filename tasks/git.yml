@@ -51,11 +51,12 @@
     value: "true"
     scope: global
 
-- name: Set Git core hooksPath
+- name: Disable all Git hooks globally
   community.general.git_config:
     name: core.hooksPath
     value: "/dev/null"
     scope: global
+  when: git_disable_hooks | bool
 
 - name: Enable bash-completion for git (macOS)
   ansible.builtin.lineinfile:

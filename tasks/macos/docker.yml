@@ -6,32 +6,12 @@
     path: /Applications/Docker.app
   register: docker_app
 
-- name: Prompt for sudo password for Docker Desktop
-  ansible.builtin.pause:
-    prompt: "Enter sudo password for Docker Desktop installation"
-    echo: false
-  register: docker_cask_password_prompt
-  when:
-    - not docker_app.stat.exists
-    - ansible_become_pass is not defined
-    - macos_privileged_cask_sudo_password is not defined
-    - docker_cask_sudo_password is not defined
-    - not ansible_check_mode
-
-- name: Store sudo password for Docker Desktop
-  ansible.builtin.set_fact:
-    docker_cask_sudo_password: "{{ docker_cask_password_prompt.user_input }}"
-  when:
-    - docker_cask_password_prompt is defined
-    - docker_cask_password_prompt.user_input is defined
-    - docker_cask_password_prompt.user_input | length > 0
-
 - name: Install Docker Desktop via Homebrew Cask
   community.general.homebrew_cask:
     name: docker
     state: present
     accept_external_apps: true
-    sudo_password: "{{ docker_cask_sudo_password | default(macos_privileged_cask_sudo_password) | default(ansible_become_pass) | default(omit) }}"
+    sudo_password: "{{ ansible_become_pass | default(omit) }}"
   register: docker_cask_install
   when: not docker_app.stat.exists
 

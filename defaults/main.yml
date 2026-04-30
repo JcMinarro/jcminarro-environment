@@ -21,6 +21,7 @@ ssh_config_file: "{{ ssh_directory }}/config"
 
 configure_git: true
 configure_ssh: true
+install_ssh_server: true
 install_nodejs: true
 install_sdkman: true
 configure_dotfiles: false
@@ -39,6 +40,7 @@ configure_macos_function_keys: true
 git_user_name: "Jc Miñarro"
 git_user_email: "josecarlos.minarro@gmail.com"
 git_core_editor: "vim"
+git_disable_hooks: false
 
 # ============================================
 # SDKMAN CONFIGURATION
@@ -57,6 +59,7 @@ sdkman_additional_java_versions:
 
 nodejs_version: "24.14.0"
 n_version: "lts"
+openspec_version: "1.3.1"
 
 # ============================================
 # ANKI VERSION
@@ -95,7 +98,7 @@ apt_repositories:
     key_filename: sublimehq-pub
   - repo: "deb [signed-by=/etc/apt/keyrings/tailscale.gpg] https://pkgs.tailscale.com/stable/ubuntu {{ ansible_facts['distribution_release'] }} main"
     filename: tailscale
-    key_url: "https://pkgs.tailscale.com/stable/ubuntu/jammy.noarmor.gpg"
+    key_url: "https://pkgs.tailscale.com/stable/ubuntu/{{ ansible_facts['distribution_release'] }}.noarmor.gpg"
     key_filename: tailscale
 
 # ============================================
@@ -123,6 +126,7 @@ system_packages:
   - libfuse2t64
   - wireguard
   - sshpass
+  - sshfs
   # Terminal
   - guake
   # Security
@@ -154,7 +158,8 @@ docker_packages:
 
 docker_keyrings_dir: /etc/apt/keyrings
 docker_gpg_key_url: https://download.docker.com/linux/ubuntu/gpg
-docker_repo: "deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu {{ ansible_facts['distribution_release'] }} stable"
+docker_arch: "{{ 'arm64' if ansible_facts['architecture'] == 'aarch64' else 'amd64' }}"
+docker_repo: "deb [arch={{ docker_arch }} signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu {{ ansible_facts['distribution_release'] }} stable"
 
 # ============================================
 # APPIMAGES (Linux)
@@ -301,9 +306,10 @@ brew_casks:
   # Multimedia
   - vlc
   - gimp
+  # Filesystem
+  - macfuse
   # Tools
   - flameshot
-  - anki
   - tailscale
   - scroll-reverser
   - karabiner-elements

@@ -40,6 +40,14 @@
     - linux
     - anki
 
+- name: Install SSH server
+  ansible.builtin.import_tasks: linux/ssh_server.yml
+  when: install_ssh_server | bool
+  tags:
+    - linux
+    - ssh
+    - ssh-server
+
 - name: Install Galaxy roles
   ansible.builtin.include_tasks: linux/galaxy_roles.yml
   tags:

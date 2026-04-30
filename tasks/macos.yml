@@ -1,6 +1,14 @@
 ---
 # macOS-specific tasks
 
+- name: Install SSH server
+  ansible.builtin.import_tasks: macos/ssh_server.yml
+  when: install_ssh_server | bool
+  tags:
+    - macos
+    - ssh
+    - ssh-server
+
 - name: Install Homebrew formulas
   ansible.builtin.import_tasks: macos/formulas.yml
   tags:

@@ -20,11 +20,12 @@
     url: https://raw.githubusercontent.com/tj/n/master/bin/n
     dest: /tmp/n
     mode: '0755'
+  when: not n_installed.stat.exists
 
 - name: Install n
   ansible.builtin.shell: |
     export N_PREFIX="{{ home_directory }}/n"
-    /tmp/n {{ n_version }}
+    /tmp/n {{ nodejs_version }}
   args:
     creates: "{{ home_directory }}/n/bin/n"
   when: not n_installed.stat.exists
@@ -72,7 +73,7 @@
     npm install -g npm@latest
   args:
     executable: /bin/bash
-  changed_when: false
+  when: not n_installed.stat.exists
 
 - name: Install pnpm
   ansible.builtin.shell: |

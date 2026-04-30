@@ -9,6 +9,11 @@
     enabled: true
   become: true
 
+- name: Update MIME database
+  become: true
+  ansible.builtin.command: update-mime-database /usr/share/mime
+  changed_when: true
+
 # macOS handlers
 - name: Restart Finder
   ansible.builtin.command: killall Finder

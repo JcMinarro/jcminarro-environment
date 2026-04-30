@@ -39,7 +39,21 @@
         cmd: hdiutil detach "{{ elegooslicer_volume }}"
       changed_when: true
 
+  rescue:
+    - name: Unmount ElegooSlicer DMG on failure
+      ansible.builtin.command:
+        cmd: hdiutil detach "{{ elegooslicer_volume }}"
+      when: elegooslicer_volume is defined
+      failed_when: false
+      changed_when: false
+
+    - name: Re-raise ElegooSlicer install failure
+      ansible.builtin.fail:
+        msg: "ElegooSlicer installation failed. DMG has been unmounted."
+
+  always:
     - name: Clean up temp directory
       ansible.builtin.file:
         path: "{{ elegooslicer_tmp.path }}"
         state: absent
+      when: elegooslicer_tmp is defined
