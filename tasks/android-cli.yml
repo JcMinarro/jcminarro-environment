@@ -1,0 +1,30 @@
+---
+# Install Android CLI (https://developer.android.com/tools/agents/android-cli)
+# The upstream install script auto-detects OS via uname and installs the
+# `android` binary to /usr/local/bin. The same install.sh is served from both
+# the Linux and macOS download paths, so a single URL works on either platform.
+
+- name: Check if Android CLI is already installed
+  ansible.builtin.stat:
+    path: "{{ android_cli_binary }}"
+  register: android_cli_installed
+
+- name: Download and install Android CLI
+  ansible.builtin.shell: |
+    set -o pipefail
+    curl -fsSL {{ android_cli_install_url }} | bash
+  args:
+    executable: /bin/bash
+    creates: "{{ android_cli_binary }}"
+  become: true
+  when: not android_cli_installed.stat.exists
+
+- name: Get installed Android CLI version
+  ansible.builtin.command: "{{ android_cli_binary }} --version"
+  register: android_cli_version
+  changed_when: false
+  failed_when: false
+
+- name: Log installed Android CLI version
+  ansible.builtin.debug:
+    msg: "Android CLI version: {{ android_cli_version.stdout | default('unknown') }}"

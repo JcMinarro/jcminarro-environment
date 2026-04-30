@@ -32,6 +32,7 @@ The role automatically detects your OS and installs appropriate packages.
 - Docker & Docker Compose
 - OpenCode (AI coding agent)
 - OpenSpec (API specification tool)
+- Android CLI (agent-friendly Android tooling)
 
 **CLI Utilities:**
 - vim, jq, htop, btop, colordiff, tree
@@ -79,6 +80,7 @@ install_nodejs: true
 install_sdkman: true
 install_opencode: true
 install_openspec: true
+install_android_cli: true
 apply_macos_tweaks: false  # macOS system preferences
 
 # Versions
@@ -135,6 +137,7 @@ ansible-playbook -K provision.yml --skip-tags "macos"
 - `anki` - Anki flashcards
 - `opencode` - OpenCode AI agent
 - `openspec` - OpenSpec tool
+- `android-cli` - Android CLI
 - `development` - SDKMAN, Node.js, Docker
 - `communication` - Slack, Telegram, Zoom, Discord
 - `browsers` - Chrome
@@ -159,6 +162,7 @@ jcminarro-environment/
 │   ├── nodejs.yml          # Node.js via n
 │   ├── opencode.yml        # OpenCode installation
 │   ├── openspec.yml        # OpenSpec installation
+│   ├── android-cli.yml     # Android CLI installation
 │   ├── dotfiles.yml        # Dotfiles (placeholder)
 │   ├── linux.yml           # Linux task dispatcher
 │   ├── linux/              # Linux-specific tasks

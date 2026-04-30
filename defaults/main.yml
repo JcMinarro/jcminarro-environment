@@ -27,6 +27,7 @@ install_sdkman: true
 configure_dotfiles: false
 install_opencode: true
 install_openspec: true
+install_android_cli: true
 apply_macos_tweaks: false
 install_karabiner: true
 configure_karabiner: true
@@ -60,6 +61,16 @@ sdkman_additional_java_versions:
 nodejs_version: "24.14.0"
 n_version: "lts"
 openspec_version: "1.3.1"
+
+# ============================================
+# ANDROID CLI CONFIGURATION
+# ============================================
+# https://developer.android.com/tools/agents/android-cli
+# The install script auto-detects OS via uname; the same script is served
+# from the Linux and macOS download paths, so either URL works on both.
+
+android_cli_install_url: "https://dl.google.com/android/cli/latest/linux_x86_64/install.sh"
+android_cli_binary: "/usr/local/bin/android"
 
 # ============================================
 # ANKI VERSION

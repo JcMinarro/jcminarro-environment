@@ -58,6 +58,14 @@
     - openspec
     - development
 
+- name: Install Android CLI
+  ansible.builtin.include_tasks: android-cli.yml
+  when: install_android_cli | bool
+  tags:
+    - common
+    - android-cli
+    - development
+
 - name: Configure dotfiles
   ansible.builtin.include_tasks: dotfiles.yml
   when: configure_dotfiles | bool

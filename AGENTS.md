@@ -12,7 +12,7 @@ A personal Ansible role (`jcminarro-environment`) that provisions development la
 
 - `defaults/main.yml` - All variables (versions, feature toggles, package lists)
 - `tasks/main.yml` - Entry point, routes to OS-specific task files
-- `tasks/common.yml` - OS-agnostic tasks (git, ssh, sdkman, nodejs, opencode)
+- `tasks/common.yml` - OS-agnostic tasks (git, ssh, sdkman, nodejs, opencode, android-cli)
 - `tasks/linux.yml` / `tasks/linux/` - Linux-specific tasks
 - `tasks/macos.yml` / `tasks/macos/` - macOS-specific tasks
 - `handlers/main.yml` - Service restart handlers
@@ -27,7 +27,7 @@ Uses `ansible_os_family` for routing:
 
 ### Feature Toggles
 Boolean variables in `defaults/main.yml` control what gets installed:
-- `configure_git`, `configure_ssh`, `install_nodejs`, `install_sdkman`, etc.
+- `configure_git`, `configure_ssh`, `install_nodejs`, `install_sdkman`, `install_android_cli`, etc.
 
 ### Variable Naming
 - Linux-specific vars: `system_packages`, `apt_repositories`, `docker_packages`, `appimages`, `snap_packages`
