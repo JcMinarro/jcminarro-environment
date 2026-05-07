@@ -216,12 +216,16 @@ anki_dependencies:
   - zstd
   - libxkbcommon-x11-0
   - libxcb-xinerama0
+  - libxcb-cursor0
   - libqt6core6
   - libqt6gui6
+  - libqt6multimedia6
   - libqt6network6
-  - libqt6webengine6
+  - libqt6webenginecore6
+  - libqt6webenginewidgets6
   - libqt6webchannel6
   - libqt6positioning6
+  - xdg-utils
   - python3-pyaudio
   - python3-matplotlib
   - python3-requests
