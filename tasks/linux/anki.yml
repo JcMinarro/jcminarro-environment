@@ -6,6 +6,7 @@
   ansible.builtin.apt:
     name: "{{ anki_dependencies }}"
     state: present
+    lock_timeout: 300
 
 - name: Ensure Anki installation directory exists
   become: true

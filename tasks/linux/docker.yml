@@ -30,6 +30,7 @@
     name: "{{ docker_packages }}"
     state: present
     update_cache: true
+    lock_timeout: 300
 
 - name: Add user to docker group
   become: true

@@ -8,13 +8,24 @@
     state: directory
     mode: '0755'
 
+- name: Check installed AppImage files
+  ansible.builtin.stat:
+    path: "/opt/appimage/{{ item.appimage_url | basename }}"
+  loop: "{{ appimages }}"
+  register: installed_appimages
+
 - name: Download AppImage files
   become: true
   ansible.builtin.get_url:
-    url: "{{ item.appimage_url }}"
-    dest: "/opt/appimage/{{ item.appimage_url | basename }}"
+    url: "{{ item.item.appimage_url }}"
+    dest: "/opt/appimage/{{ item.item.appimage_url | basename }}"
     mode: '0755'
-  loop: "{{ appimages }}"
+  loop: "{{ installed_appimages.results }}"
+  when: not item.stat.exists
+  retries: 3
+  delay: 10
+  until: appimage_download is succeeded
+  register: appimage_download
 
 - name: Create wrapper scripts for AppImages
   become: true

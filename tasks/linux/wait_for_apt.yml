@@ -1,0 +1,18 @@
+---
+# Wait for other package managers before running APT tasks.
+
+- name: Wait for APT locks to be released
+  become: true
+  ansible.builtin.command:
+    argv:
+      - fuser
+      - /var/lib/dpkg/lock-frontend
+      - /var/lib/dpkg/lock
+      - /var/cache/apt/archives/lock
+      - /var/lib/apt/lists/lock
+  register: apt_locks
+  changed_when: false
+  failed_when: false
+  until: apt_locks.rc != 0
+  retries: 60
+  delay: 5

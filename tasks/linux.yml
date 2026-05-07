@@ -1,12 +1,26 @@
 ---
 # Linux-specific tasks - Ubuntu/Debian
 
+- name: Wait for APT before setting up repositories
+  ansible.builtin.import_tasks: linux/wait_for_apt.yml
+  tags:
+    - linux
+    - apt
+    - repositories
+
 - name: Setup APT repositories and keys
   ansible.builtin.import_tasks: linux/apt.yml
   tags:
     - linux
     - apt
     - repositories
+
+- name: Wait for APT before installing system packages
+  ansible.builtin.import_tasks: linux/wait_for_apt.yml
+  tags:
+    - linux
+    - apt
+    - packages
 
 - name: Install system packages
   ansible.builtin.import_tasks: linux/packages.yml
@@ -28,17 +42,37 @@
     - snaps
     - communication
 
+- name: Wait for APT before installing Docker
+  ansible.builtin.import_tasks: linux/wait_for_apt.yml
+  tags:
+    - linux
+    - docker
+
 - name: Install Docker
   ansible.builtin.import_tasks: linux/docker.yml
   tags:
     - linux
     - docker
 
+- name: Wait for APT before installing Anki
+  ansible.builtin.import_tasks: linux/wait_for_apt.yml
+  tags:
+    - linux
+    - anki
+
 - name: Install Anki
   ansible.builtin.import_tasks: linux/anki.yml
   tags:
     - linux
     - anki
+
+- name: Wait for APT before installing SSH server
+  ansible.builtin.import_tasks: linux/wait_for_apt.yml
+  when: install_ssh_server | bool
+  tags:
+    - linux
+    - ssh
+    - ssh-server
 
 - name: Install SSH server
   ansible.builtin.import_tasks: linux/ssh_server.yml

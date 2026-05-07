@@ -7,3 +7,4 @@
     name: "{{ system_packages }}"
     state: present
     update_cache: true
+    lock_timeout: 300
