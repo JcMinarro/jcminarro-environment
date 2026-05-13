@@ -1,6 +1,17 @@
 ---
 # Setup APT repositories and GPG keys
 
+- name: Install APT repository prerequisites
+  become: true
+  ansible.builtin.apt:
+    name:
+      - ca-certificates
+      - curl
+      - gnupg
+    state: present
+    update_cache: true
+    lock_timeout: 300
+
 - name: Create keyrings directory
   become: true
   ansible.builtin.file:
@@ -11,7 +22,11 @@
 - name: Install GPG keys from URLs
   become: true
   ansible.builtin.shell: |
+    {% if item.key_dearmor | default(false) %}
+    curl -fsSL "{{ item.key_url }}" | gpg --dearmor -o "/etc/apt/keyrings/{{ item.key_filename }}.gpg"
+    {% else %}
     curl -fsSL "{{ item.key_url }}" -o "/etc/apt/keyrings/{{ item.key_filename }}.gpg"
+    {% endif %}
     chmod 0644 "/etc/apt/keyrings/{{ item.key_filename }}.gpg"
   args:
     creates: "/etc/apt/keyrings/{{ item.key_filename }}.gpg"
