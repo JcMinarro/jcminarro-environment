@@ -17,7 +17,7 @@
 
 - name: Check if Anki is already installed
   ansible.builtin.stat:
-    path: "/opt/anki-{{ anki_version }}/{{ anki_package }}/anki"
+    path: "/opt/anki-{{ anki_version }}/{{ anki_extracted_package }}/anki"
   register: anki_binary
 
 - name: Download and extract Anki
@@ -32,7 +32,7 @@
 - name: Create Anki symbolic link
   become: true
   ansible.builtin.file:
-    src: "/opt/anki-{{ anki_version }}/{{ anki_package }}/anki"
+    src: "/opt/anki-{{ anki_version }}/{{ anki_extracted_package }}/anki"
     dest: "/usr/local/bin/anki"
     state: link
     force: true
@@ -51,7 +51,7 @@
 - name: Copy Anki assets
   become: true
   ansible.builtin.copy:
-    src: "/opt/anki-{{ anki_version }}/{{ anki_package }}/{{ item.src }}"
+    src: "/opt/anki-{{ anki_version }}/{{ anki_extracted_package }}/{{ item.src }}"
     dest: "{{ item.dest }}"
     mode: '0644'
     remote_src: true
@@ -63,7 +63,7 @@
 - name: Install Anki MIME types
   become: true
   ansible.builtin.copy:
-    src: "/opt/anki-{{ anki_version }}/{{ anki_package }}/anki.xml"
+    src: "/opt/anki-{{ anki_version }}/{{ anki_extracted_package }}/anki.xml"
     dest: "/usr/share/mime/packages/anki.xml"
     mode: '0644'
     remote_src: true

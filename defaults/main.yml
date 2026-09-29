@@ -76,7 +76,7 @@ android_cli_binary: "/usr/local/bin/android"
 # ANKI VERSION
 # ============================================
 
-anki_version: "25.02.5"
+anki_version: "26.09.3"
 
 # ============================================
 # DIRECTORIES
@@ -183,11 +183,11 @@ docker_repo: "deb [arch={{ docker_arch }} signed-by=/etc/apt/keyrings/docker.gpg
 # ============================================
 
 appimage_versions:
-  nextcloud: "4.0.7"
-  obsidian: "1.12.7"
+  nextcloud: "34.0.4"
+  obsidian: "1.13.7"
   rquickshare: "0.11.5"
-  elegooslicer: "1.5.0.7"
-  handy: "0.8.1"
+  elegooslicer: "1.5.3.5"
+  handy: "0.9.7"
 
 appimages:
   - appimage_url: "https://github.com/nextcloud-releases/desktop/releases/download/v{{ appimage_versions.nextcloud }}/Nextcloud-{{ appimage_versions.nextcloud }}-x86_64.AppImage"
@@ -197,7 +197,7 @@ appimages:
     appimage_flags: "--no-sandbox"
   - appimage_url: "https://github.com/Martichou/rquickshare/releases/download/v{{ appimage_versions.rquickshare }}/r-quick-share-main_v{{ appimage_versions.rquickshare }}_glibc-2.39_amd64.AppImage"
     appimage_alias: rquickshare
-  - appimage_url: "https://github.com/ELEGOO-3D/ElegooSlicer/releases/download/v{{ appimage_versions.elegooslicer }}/ElegooSlicer_Linux_V{{ appimage_versions.elegooslicer }}.AppImage"
+  - appimage_url: "https://github.com/elegooofficial/ElegooSlicer/releases/download/v{{ appimage_versions.elegooslicer }}/ElegooSlicer_Linux_V{{ appimage_versions.elegooslicer }}.AppImage"
     appimage_alias: elegooslicer
   - appimage_url: "https://github.com/cjpais/Handy/releases/download/v{{ appimage_versions.handy }}/Handy_{{ appimage_versions.handy }}_amd64.AppImage"
     appimage_alias: handy
@@ -216,7 +216,9 @@ snap_packages:
 # ANKI (Linux)
 # ============================================
 
-anki_package: "anki-{{ anki_version }}-linux-qt6"
+anki_architecture: "{{ 'aarch64' if ansible_facts['architecture'] == 'aarch64' else 'x86_64' }}"
+anki_package: "anki-{{ anki_version }}-linux-{{ anki_architecture }}"
+anki_extracted_package: "anki-{{ anki_version.split('.')[0] }}.{{ anki_version.split('.')[1] | int }}.{{ anki_version.split('.')[2] }}-linux-{{ anki_architecture }}.tar"
 anki_url: "https://github.com/ankitects/anki/releases/download/{{ anki_version }}/{{ anki_package }}.tar.zst"
 anki_dependencies:
   - zstd
@@ -248,7 +250,7 @@ anki_dependencies:
 # ELEGOOSLICER (macOS)
 # ============================================
 
-elegooslicer_macos_url: "https://github.com/ELEGOO-3D/ElegooSlicer/releases/download/v{{ appimage_versions.elegooslicer }}/ElegooSlicer_Mac_{{ ansible_facts['architecture'] | replace('x86_64', 'x86_64') | replace('aarch64', 'arm64') }}_V{{ appimage_versions.elegooslicer }}.dmg"
+elegooslicer_macos_url: "https://github.com/elegooofficial/ElegooSlicer/releases/download/v{{ appimage_versions.elegooslicer }}/ElegooSlicer_Mac_{{ ansible_facts['architecture'] | replace('x86_64', 'x86_64') | replace('aarch64', 'arm64') }}_V{{ appimage_versions.elegooslicer }}.dmg"
 
 # ============================================
 # HANDY (macOS)
