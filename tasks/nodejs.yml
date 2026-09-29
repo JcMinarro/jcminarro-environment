@@ -10,25 +10,34 @@
     state: present
   when: ansible_facts['os_family'] in ["Debian", "RedHat"]
 
-- name: Check if n is installed
+- name: Check if Node.js is installed
   ansible.builtin.stat:
-    path: "{{ home_directory }}/n/bin/n"
-  register: n_installed
+    path: "{{ home_directory }}/n/bin/node"
+  register: node_installed
+
+- name: Check installed Node.js version
+  ansible.builtin.command: "{{ home_directory }}/n/bin/node --version"
+  register: installed_node_version
+  changed_when: false
+  failed_when: false
+  when: node_installed.stat.exists
 
 - name: Download n installer
   ansible.builtin.get_url:
     url: https://raw.githubusercontent.com/tj/n/master/bin/n
     dest: /tmp/n
     mode: '0755'
-  when: not n_installed.stat.exists
+  when:
+    - not node_installed.stat.exists or (installed_node_version.stdout | default('')) != ('v' ~ nodejs_version)
 
-- name: Install n
+- name: Install configured Node.js version
   ansible.builtin.shell: |
     export N_PREFIX="{{ home_directory }}/n"
     /tmp/n {{ nodejs_version }}
   args:
-    creates: "{{ home_directory }}/n/bin/n"
-  when: not n_installed.stat.exists
+    executable: /bin/bash
+  when:
+    - not node_installed.stat.exists or (installed_node_version.stdout | default('')) != ('v' ~ nodejs_version)
 
 - name: Ensure n and node are in PATH (bash)
   ansible.builtin.blockinfile:
@@ -73,7 +82,8 @@
     npm install -g npm@latest
   args:
     executable: /bin/bash
-  when: not n_installed.stat.exists
+  when:
+    - not node_installed.stat.exists or (installed_node_version.stdout | default('')) != ('v' ~ nodejs_version)
 
 - name: Install pnpm
   ansible.builtin.shell: |
