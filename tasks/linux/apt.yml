@@ -9,7 +9,7 @@
       - curl
       - gnupg
     state: present
-    update_cache: true
+    update_cache: false
     lock_timeout: 300
 
 - name: Create keyrings directory
@@ -39,12 +39,35 @@
     repo: "{{ item.repo }}"
     filename: "{{ item.filename }}"
     state: present
-    update_cache: true
+    update_cache: false
   loop: "{{ apt_repositories }}"
+
+- name: Find cached Google Cloud APT indexes
+  become: true
+  ansible.builtin.find:
+    paths: /var/lib/apt/lists
+    patterns: "packages.cloud.google.com*"
+    file_type: file
+    recurse: true
+  register: google_cloud_apt_indexes
+
+- name: Remove cached Google Cloud APT indexes
+  become: true
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: absent
+  loop: "{{ google_cloud_apt_indexes.files }}"
 
 - name: Update APT cache
   become: true
   ansible.builtin.apt:
     update_cache: true
-    cache_valid_time: 3600
+    update_cache_retries: 5
+    update_cache_retry_max_delay: 15
+    lock_timeout: 300
+
+- name: Repair broken APT dependencies
+  become: true
+  ansible.builtin.apt:
+    state: fixed
     lock_timeout: 300
