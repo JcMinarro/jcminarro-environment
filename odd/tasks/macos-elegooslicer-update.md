@@ -62,7 +62,7 @@ Runtime boundary: local fixtures execute the real Python installer flow with mac
 | `rtk ansible-playbook --check tests/macos_elegooslicer_syntax.yml` | Passed: ok=1, changed=0, unreachable=0, failed=0, skipped=4, rescued=0, ignored=0; no download or macOS subprocess. |
 | `rtk git diff --check` | Passed with no output. |
 
-T2 delivery remains uncommitted pending the parent's feature delivery-budget decision. No push, PR, native review, binary download, local provisioning or remote access was performed. Engram mirror remains pending if session ambiguity persists; no session identity is invented.
+T2 committed as `f33bd73ab3783fcfb9668e9011b794a7ec6ccba8` after explicit size:exception approval. Native candidate review declined by the user and confirmed `declined_this_candidate`; no approval claimed. Parent rerun and independent functional verification passed all 15 tests, installer syntax and check mode. Real Mac verification remains pending. No push or PR; Engram mirror pending session ambiguity.
 
 ### User macOS verification (pending)
 From the role directory, after quitting the app:
