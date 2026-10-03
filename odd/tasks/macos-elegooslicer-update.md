@@ -26,7 +26,8 @@ The current installer checks bundle existence only, preventing updates. Inspect 
 - Required checks and macOS limitations are reported honestly.
 
 ## Evidence and next step
-Implementation candidate on `fix/macos-elegooslicer-update`, based on `f4d00a8`; work-unit commit pending (parent records the resulting hash). No push, PR or native review performed. Engram save was attempted and rejected because multiple active runtime sessions match this project/directory; full mirror remains pending and no session identity was invented.
+Implementation commit: `65f70ec7a82e104fe0f10f3ca2e5dc4a3a8bf4b2` on `fix/macos-elegooslicer-update`, based on `f4d00a8`. Native assessment: high; candidate review explicitly declined by the user, confirmed `declined_this_candidate`. No review approval, push or PR. Engram mirror remains pending because multiple active runtime sessions match; no session identity was invented.
+Independent functional verifier and parent test rerun passed: 11 fixture tests; installer syntax and check mode passed (`ok=1 changed=0 failed=0 skipped=4`). Next: user runs the macOS command below and checks the installed app and profiles.
 
 ### Behavior and limitations
 - Every normal run downloads the configured DMG and mounts it to compare actual `CFBundleIdentifier`, `CFBundleShortVersionString` and `CFBundleVersion`. No release-to-metadata equivalence is assumed. This adds download/mount overhead even when current; transient work is not reported as a bundle change.
