@@ -18,10 +18,15 @@ def metadata(app):
         raise ValueError("Not a regular application bundle: {}".format(app))
     with (app / "Contents/Info.plist").open("rb") as stream:
         info = plistlib.load(stream)
-    keys = ("CFBundleIdentifier", "CFBundleShortVersionString", "CFBundleVersion")
+    keys = ("CFBundleIdentifier", "CFBundleShortVersionString")
     values = tuple(info.get(key) for key in keys)
     if not all(isinstance(value, str) and value.strip() for value in values):
         raise ValueError("Missing bundle identity/version metadata: {}".format(app))
+    build = info.get("CFBundleVersion", "")
+    if not isinstance(build, str):
+        raise ValueError("Invalid bundle build metadata: {}".format(app))
+    # Upstream can omit or leave the build blank; None means unavailable, not a build.
+    values += (build if build.strip() else None,)
     executable = info.get("CFBundleExecutable")
     if not isinstance(executable, str) or not executable or Path(executable).name != executable:
         raise ValueError("Invalid bundle executable: {}".format(app))

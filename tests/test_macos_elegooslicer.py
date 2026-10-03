@@ -28,6 +28,21 @@ def bundle(path, version="internal-5", build="42"):
     binary.chmod(0o755)
 
 
+MISSING = object()
+
+
+def set_metadata(path, key, value):
+    plist = path / "Contents/Info.plist"
+    with plist.open("rb") as stream:
+        info = plistlib.load(stream)
+    if value is MISSING:
+        info.pop(key, None)
+    else:
+        info[key] = value
+    with plist.open("wb") as stream:
+        plistlib.dump(info, stream)
+
+
 class InstallerTests(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
@@ -58,6 +73,62 @@ class InstallerTests(unittest.TestCase):
     def test_build_difference_updates(self):
         bundle(self.target, build="41")
         self.assertTrue(installer.replace(self.source, self.target))
+
+    def test_unavailable_build_is_current_without_copy(self):
+        bundle(self.target)
+        for source_build in (MISSING, "", "   "):
+            for target_build in (MISSING, "", "   "):
+                with self.subTest(source=source_build, target=target_build):
+                    set_metadata(self.source, "CFBundleVersion", source_build)
+                    set_metadata(self.target, "CFBundleVersion", target_build)
+                    self.assertIsNone(installer.metadata(self.source)[2])
+                    self.assertFalse(installer.replace(self.source, self.target))
+                    self.run.assert_not_called()
+
+    def test_unavailable_build_updates_outdated_bundle_and_is_idempotent(self):
+        for build in (MISSING, "", "   "):
+            with self.subTest(build=build):
+                if self.target.exists():
+                    shutil.rmtree(self.target)
+                bundle(self.target, "old")
+                set_metadata(self.source, "CFBundleVersion", build)
+                set_metadata(self.target, "CFBundleVersion", build)
+                self.assertTrue(installer.replace(self.source, self.target))
+                self.assertEqual(installer.metadata(self.source), installer.metadata(self.target))
+                self.run.reset_mock()
+                self.assertFalse(installer.replace(self.source, self.target))
+                self.run.assert_not_called()
+
+    def test_malformed_build_preserves_installed(self):
+        bundle(self.target, "old")
+        for build in (42, False, [], {}):
+            with self.subTest(build=build):
+                set_metadata(self.source, "CFBundleVersion", build)
+                with self.assertRaisesRegex(ValueError, "Invalid bundle build metadata"):
+                    installer.replace(self.source, self.target)
+                self.assertEqual(installer.metadata(self.target)[1], "old")
+                self.run.assert_not_called()
+        # plistlib cannot encode null, but an explicitly present null is not absence.
+        with patch.object(installer.plistlib, "load", return_value={
+                "CFBundleIdentifier": "test.slicer",
+                "CFBundleShortVersionString": "internal-5", "CFBundleVersion": None}):
+            with self.assertRaisesRegex(ValueError, "Invalid bundle build metadata"):
+                installer.replace(self.source, self.target)
+        self.assertEqual(installer.metadata(self.target)[1], "old")
+        self.run.assert_not_called()
+
+    def test_invalid_required_metadata_preserves_installed(self):
+        bundle(self.target, "old")
+        for key, valid in (("CFBundleIdentifier", "test.slicer"),
+                           ("CFBundleShortVersionString", "internal-5")):
+            for value in (MISSING, "", "   ", 42, False, [], {}):
+                with self.subTest(key=key, value=value):
+                    set_metadata(self.source, key, value)
+                    with self.assertRaisesRegex(ValueError, "Missing bundle identity/version metadata"):
+                        installer.replace(self.source, self.target)
+                    self.assertEqual(installer.metadata(self.target)[1], "old")
+                    self.run.assert_not_called()
+            set_metadata(self.source, key, valid)
 
     def test_invalid_download_preserves_installed(self):
         bundle(self.target, "old")
