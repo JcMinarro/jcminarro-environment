@@ -1,0 +1,8 @@
+---
+# Static import deliberately parses macOS tasks even on a Linux controller.
+- name: Syntax-check only the macOS ElegooSlicer installer
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Import installer
+      ansible.builtin.import_tasks: ../tasks/macos/elegooslicer.yml

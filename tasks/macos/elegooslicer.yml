@@ -1,59 +1,39 @@
 ---
-# Install ElegooSlicer for macOS via DMG
+# Compare against the actual downloaded bundle, not an assumed release/version mapping.
+- name: Explain ElegooSlicer check mode
+  ansible.builtin.debug:
+    msg: "ElegooSlicer bundle comparison requires downloading the DMG; skipped in check mode."
+  when: ansible_check_mode
+  tags: [elegooslicer]
 
-- name: Check if ElegooSlicer is already installed
-  ansible.builtin.stat:
-    path: /Applications/ElegooSlicer.app
-  register: elegooslicer_app
-
-- name: Install ElegooSlicer
-  when: not elegooslicer_app.stat.exists and not ansible_check_mode
+- name: Install or update ElegooSlicer
+  when: not ansible_check_mode
+  tags: [elegooslicer]
   block:
     - name: Create temp directory for DMG
       ansible.builtin.tempfile:
         state: directory
         suffix: .elegooslicer
       register: elegooslicer_tmp
+      changed_when: false
 
     - name: Download ElegooSlicer DMG
       ansible.builtin.get_url:
         url: "{{ elegooslicer_macos_url }}"
         dest: "{{ elegooslicer_tmp.path }}/ElegooSlicer.dmg"
-
-    - name: Mount ElegooSlicer DMG
-      ansible.builtin.command:
-        cmd: hdiutil attach "{{ elegooslicer_tmp.path }}/ElegooSlicer.dmg" -nobrowse -readonly
-      register: elegooslicer_mount
-      changed_when: true
-
-    - name: Find mounted volume
-      ansible.builtin.set_fact:
-        elegooslicer_volume: "{{ elegooslicer_mount.stdout_lines | last | regex_search('(/Volumes/[^\\s]+)') }}"
-
-    - name: Copy ElegooSlicer to Applications
-      ansible.builtin.command:
-        cmd: cp -R "{{ elegooslicer_volume }}/ElegooSlicer.app" /Applications/
-
-    - name: Unmount ElegooSlicer DMG
-      ansible.builtin.command:
-        cmd: hdiutil detach "{{ elegooslicer_volume }}"
-      changed_when: true
-
-  rescue:
-    - name: Unmount ElegooSlicer DMG on failure
-      ansible.builtin.command:
-        cmd: hdiutil detach "{{ elegooslicer_volume }}"
-      when: elegooslicer_volume is defined
-      failed_when: false
       changed_when: false
 
-    - name: Re-raise ElegooSlicer install failure
-      ansible.builtin.fail:
-        msg: "ElegooSlicer installation failed. DMG has been unmounted."
+    - name: Validate and safely replace ElegooSlicer when needed
+      ansible.builtin.script:
+        cmd: '{{ (role_path ~ "/files/macos_elegooslicer.py") | quote }} {{ (elegooslicer_tmp.path ~ "/ElegooSlicer.dmg") | quote }}'
+        executable: "{{ ansible_facts['python']['executable'] }}"
+      register: elegooslicer_install
+      changed_when: "'ELEGOOSLICER_CHANGED' in elegooslicer_install.stdout"
 
   always:
-    - name: Clean up temp directory
+    - name: Clean up downloaded DMG
       ansible.builtin.file:
         path: "{{ elegooslicer_tmp.path }}"
         state: absent
-      when: elegooslicer_tmp is defined
+      when: elegooslicer_tmp is defined and elegooslicer_tmp.path is defined
+      changed_when: false
